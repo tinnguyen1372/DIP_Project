@@ -3,7 +3,7 @@
 from ev3dev2.motor import LargeMotor, MediumMotor, OUTPUT_A, OUTPUT_B, OUTPUT_C, SpeedDPS
 from ev3dev2.sensor.lego import ColorSensor, InfraredSensor, UltrasonicSensor
 from pprint import pformat
-from rubikscolorresolver import RubiksColorSolverGeneric
+from rubikscolorresolver.solver import RubiksColorSolverGeneric
 from subprocess import check_output
 from time import sleep
 import json
@@ -486,7 +486,7 @@ class MindCuber(object):
                 log.info("wait for cube...distance %d, present for %d/%d" %
                          (dist, rubiks_present, rubiks_present_target))
             else:
-                if, rubiks_present:
+                if rubiks_present:
                     log.info('wait for cube...cube removed (%d)' % dist)
                 rubiks_present = 0
 
