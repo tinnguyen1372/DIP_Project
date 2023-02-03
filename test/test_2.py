@@ -23,7 +23,7 @@ def run_kociemba_actions(actions):
             face_down = list(a)[0]
             rotation_dir = 4 - int(a[-1])
 
-            print("Move {}/{}: Face_down:{}     Rotation_dir:{} (action: {})".format(i, total_actions, face_down, rotation_dir, pformat(a)))
+            print("Move {}/{}: Face_down:{}     Rotation_dir:{} (action: {})".format(i+1, total_actions, face_down, rotation_dir, pformat(a)))
 
             def move(face_down):
                 print("Face_down {}".format(face_down))
@@ -53,4 +53,5 @@ def run_kociemba_actions(actions):
                 print("Cube run rotate_cube_blocked_3()")
             print("\n")
 run_kociemba_actions(actions)
+print("Done Solving!!!")
 # self.cube_done()
