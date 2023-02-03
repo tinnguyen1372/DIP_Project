@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import twophase.solver as sv
+import solver
 import paho.mqtt.client as mqtt
 from rubikscolorresolver.solver import RubiksColorSolverGeneric
 import json
@@ -27,11 +27,8 @@ def on_message(client, userdata, msg):
     output = e
   cube = None
   cubestring = output
-  print("Recieved scramble from EV3: {}".format(output))
-  print('Solving...')
-  solution = sv.solve(cubestring,max_length,time_out)
-  solution = solution[:solution.strip().rfind(" ")]
-  print(solution)
+  method = 1 # 1 for Two phase Kociemba, 2 for Korf
+  solution = solver.solve(max_length, time_out, cubestring, method)
   client.publish("topic/pc_to_ev3", solution)
   #client.disconnect()
     
