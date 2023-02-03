@@ -22,6 +22,7 @@ def on_message(client, userdata, msg):
     cube.enter_scan_data(json.loads(dict))
     cube.crunch_colors()
     output = "".join(cube.cube_for_kociemba_strict())
+    cube.print_cube()
   except Exception as e:
     print(e)
     output = e
