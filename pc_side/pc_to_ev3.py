@@ -9,7 +9,7 @@ import json
 max_length = 19
 time_out = 2
 #IP Address of the Broker (Bluetooth Network Connection)
-ev3_ip = "192.168.137.100"
+ev3_ip = "192.168.137.137"
 
 def on_connect(client, userdata, flags, rc):
   print("Connected with result code "+str(rc))
@@ -24,7 +24,6 @@ def on_message(client, userdata, msg):
     output = "".join(cube.cube_for_kociemba_strict())
   except Exception as e:
     print(e)
-    # logger.exception(str(e))
     output = e
   cube = None
   cubestring = output
