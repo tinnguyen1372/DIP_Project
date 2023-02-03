@@ -421,19 +421,18 @@ class MindCuber(object):
         total_actions = len(actions)
 
         for (i, a) in enumerate(actions):
+            # if a.endswith("3"):
+            #     face_down = list(a)[0]
+            #     rotation_dir = 1
+            # elif a.endswith("2"):
+            #     face_down = list(a)[0]
+            #     rotation_dir = 2
+            # elif a.endswith("1"):
+            #     face_down = list(a)[0]
+            #     rotation_dir = 3
+            face_down = list(a)[0]
+            rotation_dir = 4 - int(a[-1])
 
-            if self.shutdown:
-                break
-
-            if a.endswith("'"):
-                face_down = list(a)[0]
-                rotation_dir = 1
-            elif a.endswith("2"):
-                face_down = list(a)[0]
-                rotation_dir = 2
-            else:
-                face_down = a
-                rotation_dir = 3
 
             log.info("Move %d/%d: %s%s (a %s)" % (i, total_actions, face_down, rotation_dir, pformat(a)))
             self.move(face_down)
