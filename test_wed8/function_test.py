@@ -17,9 +17,10 @@ log = logging.getLogger(__name__)
 logging.addLevelName(logging.ERROR, "\033[91m   %s\033[0m" % logging.getLevelName(logging.ERROR))
 logging.addLevelName(logging.WARNING, "\033[91m %s\033[0m" % logging.getLevelName(logging.WARNING))
 
-mcube = MindCuber()
 
-try:
+def solve(scan_try):
+    # try
+    mcube = MindCuber()
     mcube.wait_for_cube_insert()
 
     # Push the cube to the right so that it is in the expected
@@ -36,18 +37,23 @@ try:
 
     #Step 3: Solve
     mcube.flipper_hold_cube(100)
-    mcube.resolve(result)
+    try:
+        mcube.resolve(result)
+    except:
+        if not scan_try:
+            log.info("Scan Error /n Scanning Again...")
+            solve(1)            
+        else:
+            log.info("Scan Error /n System Terminating...")
+            mcube.shutdown_robot()
+            sys.exit(1)
 
-    # mcube.rotate_cube_blocked_1()
-    # mcube.flip()
-    # mcube.rotate_cube_blocked_2()
-    # mcube.flip()    
-    # mcube.rotate_cube_blocked_3()
-    # mcube.flip()
 
-    mcube.shutdown_robot()
+        mcube.shutdown_robot()
 
-except Exception as e:
-    log.exception(e)
-    mcube.shutdown_robot()
-    sys.exit(1)
+    # except Exception as e:
+    #     log.exception(e)
+    #     mcube.shutdown_robot()
+    #     sys.exit(1)
+
+solve(0)
