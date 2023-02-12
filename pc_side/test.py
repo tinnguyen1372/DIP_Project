@@ -29,7 +29,7 @@ class EV3():
     def spawn_ssh(self):
         try:
             # self.spawn = pexpect.spawn(f'ssh {self.user}@{self.ip}',timeout=10)
-            self.spawn = pexpect.spawn(f'ssh {self.user}@ev3dev',timeout=10)
+            self.spawn = pexpect.spawn(f'ssh {self.user}@{self.ip}',timeout=10)
             self.spawn.expect("password")
             self.sendline(self.password)
             self.spawn.expect(">")
@@ -46,11 +46,11 @@ class EV3():
                 self.running = True
             return
 
-    def run_file_name(filename):
-        try:
-            pexpect.run(f"python3 {filename}")
-        except:
-            logging.debug("Failed to run file {}".format(filename))
+    # def run_file_name(filename):
+    #     try:
+    #         pexpect.run(f"python3 {filename}")
+    #     except:
+    #         logging.debug("Failed to run file {}".format(filename))
 
     def run(self):
         while not self.status:
@@ -78,7 +78,7 @@ order = ["funtion_test",]
 ev3 = EV3(ip = ev3_ip)
 try:        
     ev3.spawn_ssh()
-    for i in order:
-        ev3.run_file_name(i+'.py')
+    # for i in order:
+    #     ev3.run_file_name(i+'.py')
 except Exception as e:
     logging.info("Error in execution")
