@@ -9,6 +9,7 @@ import twophase.cubie as cubie
 import twophase.solver as sv
 import twophase
 
+
 # This is the Subscriber
 # Constant
 max_length = 19
@@ -23,7 +24,9 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, msg):
   dict = str(msg.payload.decode('utf-8'))
   cube = RubiksColorSolverGeneric(3)
+  global string_cube
   try:
+    
     cube.enter_scan_data(json.loads(dict))
     cube.crunch_colors()
     output = "".join(cube.cube_for_kociemba_strict())
@@ -32,7 +35,8 @@ def on_message(client, userdata, msg):
     print(e)
     output = e
   cube = None
-  visualise(output)
+  string_cube = output
+#   visualise(output)
   method = 1 # 1 for Two phase Kociemba, 2 for Korf
   solution = solver.solve(max_length, time_out, output, method)
   client.publish("topic/pc_to_ev3", solution)
@@ -139,7 +143,7 @@ def empty():
                 if row != 1 or col != 1:
                     canvas.itemconfig(facelet_id[f][row][col], fill="grey")
 
-def visualise(string_cube):
+def visualise():
     
     fc = twophase.face.FaceCube()
     fc.from_string(string_cube)
@@ -192,15 +196,15 @@ root.wm_title("Solver Client")
 canvas = Canvas(root, width=12 * width + 20, height=9 * width + 20)
 canvas.pack()
 
-bsolve = Button(text="Solve", height=2, width=10, relief=RAISED, command=solvex)
+bsolve = Button(root,text="Solve", height=2, width=10, relief=RAISED, command=solvex)
 bsolve_window = canvas.create_window(10 + 10.5 * width, 10 + 6.5 * width, anchor=NW, window=bsolve)
-bclean = Button(text="Clean", height=1, width=10, relief=RAISED, command=clean)
+bclean = Button(root,text="Clean", height=1, width=10, relief=RAISED, command=clean)
 bclean_window = canvas.create_window(10 + 10.5 * width, 10 + 7.5 * width, anchor=NW, window=bclean)
-bempty = Button(text="Empty", height=1, width=10, relief=RAISED, command=empty)
+bempty = Button(root,text="Empty", height=1, width=10, relief=RAISED, command=empty)
 bempty_window = canvas.create_window(10 + 10.5 * width, 10 + 8 * width, anchor=NW, window=bempty)
-brandom = Button(text="Random", height=1, width=10, relief=RAISED, command=random)
+brandom = Button(root,text="Random", height=1, width=10, relief=RAISED, command=random)
 brandom_window = canvas.create_window(10 + 10.5 * width, 10 + 8.5 * width, anchor=NW, window=brandom)
-display = Text(height=7, width=39)
+display = Text(root,height=7, width=39)
 text_window = canvas.create_window(10 + 6.5 * width, 10 + .5 * width, anchor=NW, window=display)
 canvas.bind("<Button-1>", click)
 create_facelet_rects(width)
@@ -217,7 +221,15 @@ def mqtt_com():
     client.on_message = on_message
     client.loop_forever()
 ########################################################################################################################
-thread = threading.Thread(target= mqtt_com).start()
+# thread = threading.Thread(target= mqtt_com).start()
+import sleep
+def test_mqtt():
+    sleep(10)
+    global string_cube
+    string_cube = 'DUUBULDBFRBFRRULLLBRDFFFBLURDBFDFDRFRULBLUFDURRBLBDUDL'
+
+thread = threading.Thread(target= test_mqtt).start()
+visualise()
 root.mainloop()
 
 
