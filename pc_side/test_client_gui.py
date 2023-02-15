@@ -14,7 +14,7 @@ import twophase
 max_length = 19
 time_out = 2
 #IP Address of the Broker (Bluetooth Network Connection)
-ev3_ip = "169.254.35.24"
+ev3_ip = "169.254.111.4"
 
 def on_connect(client, userdata, flags, rc):
   print("Connected with result code "+str(rc))
@@ -32,10 +32,9 @@ def on_message(client, userdata, msg):
     print(e)
     output = e
   cube = None
-  cubestring = output
-  visualise()
+  visualise(output)
   method = 1 # 1 for Two phase Kociemba, 2 for Korf
-  solution = solver.solve(max_length, time_out, cubestring, method)
+  solution = solver.solve(max_length, time_out, output, method)
   client.publish("topic/pc_to_ev3", solution)
   #client.disconnect()
     
@@ -56,7 +55,6 @@ cols = ("yellow", "green", "red", "white", "blue", "orange")
 ########################################################################################################################
 
 # ################################################ Diverse functions ###################################################
-global cubestring
 
 def show_text(txt):
     """Display messages."""
@@ -141,10 +139,10 @@ def empty():
                 if row != 1 or col != 1:
                     canvas.itemconfig(facelet_id[f][row][col], fill="grey")
 
-def visualise():
+def visualise(string_cube):
     
     fc = twophase.face.FaceCube()
-    fc.from_string(cubestring)
+    fc.from_string(string_cube)
     idx = 0
     for f in range(6):
         for row in range(3):
@@ -207,16 +205,19 @@ text_window = canvas.create_window(10 + 6.5 * width, 10 + .5 * width, anchor=NW,
 canvas.bind("<Button-1>", click)
 create_facelet_rects(width)
 create_colorpick_rects(width)
+import threading
+##############
+# Connect to client
+def mqtt_com():
+    print("Connecting to {}:".format(ev3_ip))
+    client = mqtt.Client()
+    client.connect(ev3_ip,1883,60)
+
+    client.on_connect = on_connect
+    client.on_message = on_message
+    client.loop_forever()
+########################################################################################################################
+thread = threading.Thread(target= mqtt_com).start()
 root.mainloop()
 
 
-##############
-# Connect to client
-client = mqtt.Client()
-client.connect(ev3_ip,1883,60)
-
-client.on_connect = on_connect
-client.on_message = on_message
-
-client.loop_forever()
-########################################################################################################################
