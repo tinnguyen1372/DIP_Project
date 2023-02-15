@@ -34,12 +34,13 @@ class EV3():
             # self.spawn = pexpect.spawn(f'ssh {self.user}@{self.ip}',timeout=10)
             # self.spawn = pexpect.popen_spawn.PopenSpawn(f'ssh {self.user}@{self.ip}',timeout=10)
             self.spawn = wexpect.spawn(f'ssh {self.user}@{self.ip}',timeout=10)
-            self.spawn.expect("Password:".format(self.user, self.ip))
+            self.spawn.expect("Password:")
             self.spawn.sendline(self.password)
             logging.info("Logged in EV3")
-            self.spawn.expect("#")
-            logging.info(self.spawn.readline())
-            self.spawn.sendline(f"python3 ./test_wed8/main.py")
+            self.spawn.expect("$")    
+            wexpect.spawn(f"ls")
+            print(self.spawn.readline())
+            # self.spawn.sendline(f"python3 ./test_wed8/function_test.py")
             self.status = True
             self.running = False
             # try:
@@ -62,7 +63,7 @@ class EV3():
             self.spawn_ssh()
         return
 
-ev3_ip = "169.254.111.4"
+ev3_ip = "169.254.132.123"
 # order = ["main.py",]
 ev3 = EV3(ip = ev3_ip)
 try:        

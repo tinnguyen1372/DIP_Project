@@ -9,7 +9,7 @@ import json
 max_length = 19
 time_out = 2
 #IP Address of the Broker (Bluetooth Network Connection)
-ev3_ip = "169.254.111.4"
+ev3_ip = "169.254.132.123"
 
 def on_connect(client, userdata, flags, rc):
   print("Connected with result code "+str(rc))
