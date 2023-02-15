@@ -1,21 +1,62 @@
-# ################ A simple graphical interface which communicates with the server #####################################
+#!/usr/bin/env python3
+import solver
+import paho.mqtt.client as mqtt
+from rubikscolorresolver.solver import RubiksColorSolverGeneric
+import json
 from solver import solve
 from tkinter import *
 import twophase.cubie as cubie
 import twophase.solver as sv
+import twophase
+
+# This is the Subscriber
+# Constant
+max_length = 19
+time_out = 2
+#IP Address of the Broker (Bluetooth Network Connection)
+ev3_ip = "169.254.35.24"
+
+def on_connect(client, userdata, flags, rc):
+  print("Connected with result code "+str(rc))
+  client.subscribe("topic/ev3_to_pc")
+
+def on_message(client, userdata, msg):
+  dict = str(msg.payload.decode('utf-8'))
+  cube = RubiksColorSolverGeneric(3)
+  try:
+    cube.enter_scan_data(json.loads(dict))
+    cube.crunch_colors()
+    output = "".join(cube.cube_for_kociemba_strict())
+    cube.print_cube()
+  except Exception as e:
+    print(e)
+    output = e
+  cube = None
+  cubestring = output
+  visualise()
+  method = 1 # 1 for Two phase Kociemba, 2 for Korf
+  solution = solver.solve(max_length, time_out, cubestring, method)
+  client.publish("topic/pc_to_ev3", solution)
+  #client.disconnect()
+    
+
+
+# ################ A simple graphical interface which communicates with the server #####################################
+
 
 
 # ################################## Some global variables and constants ###############################################
 width = 60  # width of a facelet in pixels
 facelet_id = [[[0 for col in range(3)] for row in range(3)] for face in range(6)]
 colorpick_id = [0 for i in range(6)]
+# cubestring = "UUUUUUUUURRRRRRRRRFFFFFFFFFDDDDDDDDDLLLLLLLLLBBBBBBBBB"
 curcol = None
 t = ("U", "R", "F", "D", "L", "B")
-sampleCubeString = "FBRRUFRFULRFLRLUDUBLBUFDDBFLRRRDBBDRLUDULFDDFDUUBBLBFL"
 cols = ("yellow", "green", "red", "white", "blue", "orange")
 ########################################################################################################################
 
 # ################################################ Diverse functions ###################################################
+global cubestring
 
 def show_text(txt):
     """Display messages."""
@@ -68,7 +109,7 @@ def get_definition_string():
 # ###################################### Solve the displayed cube ######################################################
 
 
-def solvex(cubestring):
+def solvex():
     try:
         # convert from cubestring to color here
         defstr = get_definition_string()
@@ -76,8 +117,8 @@ def solvex(cubestring):
     except BaseException as e:
         show_text('Invalid facelet configuration.\nWrong or missing colors. ' + e.__doc__)
         return
-    show_text(cubestring + '\n')
-    show_text(sv.solve(cubestring,19,2) + '\n')
+    show_text(defstr + '\n')
+    show_text(sv.solve(defstr,19,2) + '\n')
 
 ########################################################################################################################
 
@@ -100,7 +141,16 @@ def empty():
                 if row != 1 or col != 1:
                     canvas.itemconfig(facelet_id[f][row][col], fill="grey")
 
-
+def visualise():
+    
+    fc = twophase.face.FaceCube()
+    fc.from_string(cubestring)
+    idx = 0
+    for f in range(6):
+        for row in range(3):
+            for col in range(3):
+                canvas.itemconfig(facelet_id[f][row][col], fill=cols[fc.f[idx]])
+                idx += 1
     
 
 def random():
@@ -108,6 +158,7 @@ def random():
     cc = cubie.CubieCube()
     cc.randomize()
     fc = cc.to_facelet_cube()
+    print(type(fc) )
     idx = 0
     for f in range(6):
         for row in range(3):
@@ -136,6 +187,8 @@ def click(_event):
 #  ###################################### Generate and display the TK_widgets ##########################################
 
 
+
+
 root = Tk()
 root.wm_title("Solver Client")
 canvas = Canvas(root, width=12 * width + 20, height=9 * width + 20)
@@ -155,4 +208,15 @@ canvas.bind("<Button-1>", click)
 create_facelet_rects(width)
 create_colorpick_rects(width)
 root.mainloop()
+
+
+##############
+# Connect to client
+client = mqtt.Client()
+client.connect(ev3_ip,1883,60)
+
+client.on_connect = on_connect
+client.on_message = on_message
+
+client.loop_forever()
 ########################################################################################################################
