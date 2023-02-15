@@ -16,7 +16,7 @@ max_length = 19
 time_out = 2
 #IP Address of the Broker (Bluetooth Network Connection)
 ev3_ip = "169.254.111.4"
-
+string_cube = ""
 def on_connect(client, userdata, flags, rc):
   print("Connected with result code "+str(rc))
   client.subscribe("topic/ev3_to_pc")
@@ -24,7 +24,7 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, msg):
   dict = str(msg.payload.decode('utf-8'))
   cube = RubiksColorSolverGeneric(3)
-  global string_cube
+#   global string_cube
   try:
     
     cube.enter_scan_data(json.loads(dict))
@@ -35,7 +35,7 @@ def on_message(client, userdata, msg):
     print(e)
     output = e
   cube = None
-  string_cube = output
+#   string_cube = output
 #   visualise(output)
   method = 1 # 1 for Two phase Kociemba, 2 for Korf
   solution = solver.solve(max_length, time_out, output, method)
@@ -144,7 +144,7 @@ def empty():
                     canvas.itemconfig(facelet_id[f][row][col], fill="grey")
 
 def visualise():
-    
+    global string_cube
     fc = twophase.face.FaceCube()
     fc.from_string(string_cube)
     idx = 0
@@ -222,14 +222,17 @@ def mqtt_com():
     client.loop_forever()
 ########################################################################################################################
 # thread = threading.Thread(target= mqtt_com).start()
-import sleep
+import time
 def test_mqtt():
-    sleep(10)
+    print("test mqtt")
+    time.sleep(10)
+    print("inserting cubestring")
     global string_cube
     string_cube = 'DUUBULDBFRBFRRULLLBRDFFFBLURDBFDFDRFRULBLUFDURRBLBDUDL'
+    visualise()
 
 thread = threading.Thread(target= test_mqtt).start()
-visualise()
+
 root.mainloop()
 
 
