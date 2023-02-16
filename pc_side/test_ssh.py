@@ -42,12 +42,12 @@ class EV3():
             logging.info("Logged in EV3")
             self.spawn.sendline("python3 ./test_wed8/function_test.py")
             self.spawn.expect(["\n"],timeout = None)
-            if self.spawn.eof():
-                self.spawn.close()
-                logging.info("Done Solving")
-                self.status = True
-                self.running = False
-                return
+            self.spawn.expect(wexpect.EOF, timeout = None)
+            self.spawn.close()
+            logging.info("Done Solving")
+            self.status = True
+            self.running = False
+            return
         except Exception as e:
             logging.info("Failed to connect to EV3 with error: {}".format(e))
             self.status = False
