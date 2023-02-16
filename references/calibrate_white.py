@@ -13,7 +13,7 @@ If you move to a different room with different lighting it is a good idea
 to run this program again.
 """
 
-from 3x3cube import MindCuber
+from mindcuber import MindCuber
 import logging
 import sys
 
