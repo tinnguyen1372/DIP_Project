@@ -20,6 +20,10 @@ time_out = 2
 #IP Address of the Broker (Bluetooth Network Connection)
 ev3_ip = "169.254.119.198"
 string_cube = ""
+DEFAULT_DIRECTORY = "test_wed8"
+DEFAULT_FILE = "function_test"
+DEFAULT_IP = "169.254.182.148"
+
 def on_connect(client, userdata, flags, rc):
   print("Connected with result code "+str(rc))
   client.subscribe("topic/ev3_to_pc")
@@ -211,30 +215,6 @@ def click(_event):
 
 #  ###################################### Generate and display the TK_widgets ##########################################
 
-
-
-
-root = Tk()
-root.wm_title("Solver Client")
-canvas = Canvas(root, width=12 * width + 20, height=9 * width + 20)
-canvas.pack()
-
-bsolve = Button(root,text="Solve", height=2, width=10, relief=RAISED, command=solvex)
-bsolve_window = canvas.create_window(10 + 10.5 * width, 10 + 6.5 * width, anchor=NW, window=bsolve)
-bclean = Button(root,text="Clean", height=1, width=10, relief=RAISED, command=clean)
-bclean_window = canvas.create_window(10 + 10.5 * width, 10 + 7.5 * width, anchor=NW, window=bclean)
-bempty = Button(root,text="Empty", height=1, width=10, relief=RAISED, command=empty)
-bempty_window = canvas.create_window(10 + 10.5 * width, 10 + 8 * width, anchor=NW, window=bempty)
-brandom = Button(root,text="Random", height=1, width=10, relief=RAISED, command=random)
-brandom_window = canvas.create_window(10 + 10.5 * width, 10 + 8.5 * width, anchor=NW, window=brandom)
-display = Text(root,height=7, width=39)
-text_window = canvas.create_window(10 + 6.5 * width, 10 + .5 * width, anchor=NW, window=display)
-canvas.bind("<Button-1>", click)
-create_facelet_rects(width)
-create_colorpick_rects(width)
-
-root.bind('<<TimeChanged>>', visualise)
-
 import threading
 ##############
 # Connect to client
@@ -263,7 +243,67 @@ def test_mqtt():
     # string_cube = 'DUUBULDBFRBFRRULLLBRDFFFBLURDBFDFDRFRULBLUFDURRBLBDUDL'
     
 
-thread = threading.Thread(target= test_mqtt).start()
+# thread = threading.Thread(target= test_mqtt).start()
+def mqtt_connect_button():
+    threading.Thread(target= test_mqtt).start()
+
+from test_ssh import *
+def ssh_client_connect():
+    ev3 = SSH_Client(ip = ev3_ip)
+    try:        
+        ev3.spawn_ssh(dir = directory, filename = file_to_run)
+    except Exception as e:
+        logging.info("Error in execution: {}".format(e))
+    
+def ssh_client_button():
+    threading.Thread(target= ssh_client_connect).start()
+    
+
+root = Tk()
+root.wm_title("Solver Client")
+canvas = Canvas(root, width=12 * width + 20, height=9 * width + 20)
+canvas.pack()
+
+hp = Label(text='Remote SSH connection', font=("Arial", 9, "bold"))
+hp_window = canvas.create_window(10 + 0 * width, -25+ 0.6 * width, anchor=NW, window=hp)
+hp = Label(text='EV3 IP address', font=("", 7))
+hp_window1 = canvas.create_window(10 + 0 * width, -25+ 0.9 * width, anchor=NW, window=hp)
+txt_host = Text(height=1, width=20)
+txt_host.insert(INSERT, DEFAULT_IP)
+txt_host_window = canvas.create_window(10 + 0 * width, -25+ 1.2 * width, anchor=NW, window=txt_host)
+hp = Label(text='EV3 directory', font=("", 7))
+hp_window2 = canvas.create_window(10 + 0 * width, -25+ 1.5 * width, anchor=NW, window=hp)
+txt_port = Text(height=1, width=20)
+txt_port_window = canvas.create_window(10 + 0 * width,-25+ 1.8 * width, anchor=NW, window=txt_port)
+hp = Label(text='EV3 file name', font=("", 7))
+hp_window3 = canvas.create_window(10 + 0 * width, -25+ 2.1 * width, anchor=NW, window=hp)
+txt_port.insert(INSERT, DEFAULT_DIRECTORY)
+txt_ip = Text(height=1, width=20)
+txt_ip_window = canvas.create_window(10 + 0 * width, -25+ 2.4 * width, anchor=NW, window=txt_ip)
+txt_ip.insert(INSERT, DEFAULT_FILE)
+bsolve = Button(root,text="Scan & Solve", height=2, width=10, relief=RAISED, command=ssh_client_button)
+bsolve_window = canvas.create_window(10 + 1.5 * width, -25 + 2.8 * width, anchor=NW, window=bsolve)
+bsolve = Button(root,text="PC Connect", height=2, width=10, relief=RAISED, command=mqtt_connect_button)
+bsolve_window = canvas.create_window(10 +0* width, -25 + 2.8 * width, anchor=NW, window=bsolve)
+
+
+bsolve = Button(root,text="Solve", height=2, width=10, relief=RAISED, command=solvex)
+bsolve_window = canvas.create_window(10 + 10.5 * width, 10 + 6.5 * width, anchor=NW, window=bsolve)
+bclean = Button(root,text="Clean", height=1, width=10, relief=RAISED, command=clean)
+bclean_window = canvas.create_window(10 + 10.5 * width, 10 + 7.5 * width, anchor=NW, window=bclean)
+bempty = Button(root,text="Empty", height=1, width=10, relief=RAISED, command=empty)
+bempty_window = canvas.create_window(10 + 10.5 * width, 10 + 8 * width, anchor=NW, window=bempty)
+brandom = Button(root,text="Random", height=1, width=10, relief=RAISED, command=random)
+brandom_window = canvas.create_window(10 + 10.5 * width, 10 + 8.5 * width, anchor=NW, window=brandom)
+display = Text(root,height=7, width=39)
+text_window = canvas.create_window(10 + 6.5 * width, 10 + .5 * width, anchor=NW, window=display)
+canvas.bind("<Button-1>", click)
+create_facelet_rects(width)
+create_colorpick_rects(width)
+
+root.bind('<<TimeChanged>>', visualise)
+
+
 
 root.mainloop()
 
