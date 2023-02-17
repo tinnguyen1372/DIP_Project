@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-ev3_ip = "169.254.21.205"
+ev3_ip = "169.254.182.148"
 directory = "test_wed8"
 file_to_run = "function_test"
 
@@ -15,8 +15,7 @@ import wexpect
 
 logging.basicConfig(level=logging.INFO,
                         format='%(asctime)s %(filename)12s %(levelname)8s: %(message)s',
-                        stream= sys.stdout
-                    )
+                    stream= sys.stdout)
 logging = logging.getLogger(__name__)
 
 class EV3():
@@ -44,14 +43,16 @@ class EV3():
             self.spawn.logfile = sys.stdout
             self.spawn.expect("Password:")
             self.spawn.sendline(self.password)
+            time.sleep(1)
             logging.info("Logged in EV3")
-
-            self.spawn.sendline("python3 ./{}}/{}}.py".format(dir,filename))
-            self.spawn.expect("\n")
-            self.spawn.expect("\n")
+            logging.info("Running {}.py in {}".format(filename,dir))
+            self.spawn.sendline(f"python3 ./{dir}/{filename}.py")
             self.spawn.expect("\n",timeout = None)
+            self.spawn.expect("\n", timeout = None)
+            self.spawn.expect("\n",timeout = None)
+
             self.spawn.sendline("exit")
-            self.spawn.expect(wexpect.EOF)
+            self.spawn.expect(wexpect.EOF,timeout =None)
  
             self.spawn.close()
             logging.info("Done Solving")
