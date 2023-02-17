@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-ev3_ip = "169.254.24.55"
+ev3_ip = "169.254.21.205"
 import logging
 import string
 import sys, pathlib
@@ -7,7 +7,7 @@ import threading
 import logging
 import time
 import pexpect
-# from pexpect.popen_spawn import PopenSpawn
+from pexpect.popen_spawn import PopenSpawn
 import wexpect
 logging.basicConfig(level=logging.INFO,
                         format='%(asctime)s %(filename)12s %(levelname)8s: %(message)s')
@@ -33,16 +33,20 @@ class EV3():
             # self.spawn = pexpect.spawn(f'ssh {self.user}@{self.ip}',timeout=10)
             logging.info(f'SSH-ing to {self.user}@{self.ip} with password {self.password}')
             # self.spawn = pexpect.spawn(f'ssh {self.user}@{self.ip}',timeout=10)
-            self.spawn = pexpect.popen_spawn.PopenSpawn(f'ssh {self.user}@{self.ip}', encoding = 'utf-8')
-            # self.spawn = wexpect.spawn(f'ssh {self.user}@{self.ip}',encoding = 'utf-8')
+            # self.spawn = pexpect.popen_spawn.PopenSpawn(f'ssh {self.user}@{self.ip}', encoding = 'utf-8')
+            self.spawn = wexpect.spawn(f'ssh {self.user}@{self.ip}',encoding = 'utf-8',timeout = None)
             self.spawn.logfile = sys.stdout
             self.spawn.expect("Password:")
             self.spawn.sendline(self.password)
-            self.spawn.expect(["\n"])
             logging.info("Logged in EV3")
+
             self.spawn.sendline("python3 ./test_wed8/function_test.py")
-            self.spawn.expect(["\n"],timeout = None)
-            self.spawn.expect(wexpect.EOF, timeout = None)
+            self.spawn.expect("\n")
+            self.spawn.expect("\n")
+            self.spawn.expect("\n",timeout = None)
+            self.spawn.sendline("exit")
+            self.spawn.expect(wexpect.EOF)
+
             self.spawn.close()
             logging.info("Done Solving")
             self.status = True
