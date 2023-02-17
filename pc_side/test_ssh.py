@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-
+ev3_ip = "169.254.24.55"
 import logging
 import string
 import sys, pathlib
@@ -33,25 +33,20 @@ class EV3():
             # self.spawn = pexpect.spawn(f'ssh {self.user}@{self.ip}',timeout=10)
             logging.info(f'SSH-ing to {self.user}@{self.ip} with password {self.password}')
             # self.spawn = pexpect.spawn(f'ssh {self.user}@{self.ip}',timeout=10)
-            # self.spawn = pexpect.popen_spawn.PopenSpawn(f'ssh {self.user}@{self.ip}',timeout=10)
-            # self.spawn = wexpect.spawn(f'ssh {self.user}@{self.ip}',timeout=10)
-            # self.spawn = wexpect.spawn(f'ssh {self.user}@{self.ip}',timeout=10)
-            self.spawn =  wexpect.spawm("cmd.exe")
-            self.spawn.timeout = None
-            self.spawn.logfile = sys.stdout
-            self.spawn.sendline(f'ssh -t {self.user}@{self.ip} "{self.dir}"')
+            # self.spawn = pexpect.popen_spawn.PopenSpawn(f'ssh {self.user}@{self.ip}')
+            self.spawn = wexpect.spawn(f'ssh {self.user}@{self.ip}',encoding = 'utf-8')
+            self.spawn.logfile_read = sys.stdout
             self.spawn.expect("Password:")
             self.spawn.sendline(self.password)
+            self.spawn.expect(["\n"])
             logging.info("Logged in EV3")
-            self.spawn.sendline("python3 function_test.py")
-            logging.info(self.spawn.after)
+            self.spawn.sendline("python3 ./test_wed8/function_test.py")
+            self.spawn.expect(["\n"],timeout = None)
             self.spawn.expect(wexpect.EOF, timeout = None)
+            self.spawn.close()
+            logging.info("Done Solving")
             self.status = True
             self.running = False
-            # try:
-
-            # except:
-            #     logging.debug("Failed to run file {}".format("main.py"))
             return
         except Exception as e:
             logging.info("Failed to connect to EV3 with error: {}".format(e))
@@ -68,7 +63,6 @@ class EV3():
             self.spawn_ssh()
         return
 
-ev3_ip = "169.254.132.123"
 # order = ["main.py",]
 ev3 = EV3(ip = ev3_ip)
 try:        
