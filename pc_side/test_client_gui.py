@@ -8,6 +8,9 @@ from tkinter import *
 import twophase.cubie as cubie
 import twophase.solver as sv
 import twophase
+import queue
+
+comque= queue.Queue()
 
 
 # This is the Subscriber
@@ -15,7 +18,7 @@ import twophase
 max_length = 19
 time_out = 2
 #IP Address of the Broker (Bluetooth Network Connection)
-ev3_ip = "169.254.111.4"
+ev3_ip = "169.254.119.198"
 string_cube = ""
 def on_connect(client, userdata, flags, rc):
   print("Connected with result code "+str(rc))
@@ -26,15 +29,20 @@ def on_message(client, userdata, msg):
   cube = RubiksColorSolverGeneric(3)
 #   global string_cube
   try:
-    
     cube.enter_scan_data(json.loads(dict))
     cube.crunch_colors()
     output = "".join(cube.cube_for_kociemba_strict())
+    global string_cube
+    string_cube = output
     cube.print_cube()
+    comque.put(output)
+    # visualise()
+    root.event_generate('<<TimeChanged>>', when='tail')
   except Exception as e:
     print(e)
     output = e
   cube = None
+
 #   string_cube = output
 #   visualise(output)
   method = 1 # 1 for Two phase Kociemba, 2 for Korf
@@ -143,14 +151,22 @@ def empty():
                 if row != 1 or col != 1:
                     canvas.itemconfig(facelet_id[f][row][col], fill="grey")
 
-def visualise():
-    global string_cube
+def visualise(event):
+    # global string_cube
+    temp_cubestring = comque.get()
+    print("visualising ")
+    # print(string_cube)
+    print(temp_cubestring)
     fc = twophase.face.FaceCube()
-    fc.from_string(string_cube)
+    fc.from_string(temp_cubestring)
+    # fc is already modified to match the rubik's face of the app
     idx = 0
     for f in range(6):
+        center_cubie = cols[f][1][1]
         for row in range(3):
             for col in range(3):
+                print(cols[fc.f[idx]]) # red, yellow etc.
+                print(type(cols[fc.f[idx]])) # string
                 canvas.itemconfig(facelet_id[f][row][col], fill=cols[fc.f[idx]])
                 idx += 1
     
@@ -167,6 +183,13 @@ def random():
             for col in range(3):
                 canvas.itemconfig(facelet_id[f][row][col], fill=cols[fc.f[idx]])
                 idx += 1
+                # true -> false
+                # white->yellow
+                # green->orange
+                # yellow -> white
+                # blue -> red
+                # orange -> green
+                # red-> blue
 ########################################################################################################################
 
 # ################################### Edit the facelet colors ##########################################################
@@ -209,6 +232,9 @@ text_window = canvas.create_window(10 + 6.5 * width, 10 + .5 * width, anchor=NW,
 canvas.bind("<Button-1>", click)
 create_facelet_rects(width)
 create_colorpick_rects(width)
+
+root.bind('<<TimeChanged>>', visualise)
+
 import threading
 ##############
 # Connect to client
@@ -225,11 +251,17 @@ def mqtt_com():
 import time
 def test_mqtt():
     print("test mqtt")
-    time.sleep(10)
-    print("inserting cubestring")
-    global string_cube
-    string_cube = 'DUUBULDBFRBFRRULLLBRDFFFBLURDBFDFDRFRULBLUFDURRBLBDUDL'
-    visualise()
+    # time.sleep(10)
+    mqtt_com()
+    client = mqtt.Client()
+    client.connect(ev3_ip,1883,60)
+
+    client.on_connect = on_connect
+    client.on_message = on_message
+    # print("inserting cubestring")
+    # global string_cube
+    # string_cube = 'DUUBULDBFRBFRRULLLBRDFFFBLURDBFDFDRFRULBLUFDURRBLBDUDL'
+    
 
 thread = threading.Thread(target= test_mqtt).start()
 
