@@ -47,8 +47,6 @@ def solve(scan_try):
             log.info("Scan Error /n System Terminating...")
             mcube.shutdown_robot()
             sys.exit(1)
-
-
         mcube.shutdown_robot()
 
     # except Exception as e:
