@@ -41,8 +41,9 @@ class EV3():
             self.spawn.expect(["\n"])
             logging.info("Logged in EV3")
             self.spawn.sendline("python3 ./test_wed8/function_test.py")
-            self.spawn.expect(["\n"],timeout = None)
-            self.spawn.expect(wexpect.EOF, timeout = None)
+            self.spawn.interact()
+            # self.spawn.expect(["\n"],timeout = None)
+            # self.spawn.expect(wexpect.EOF, timeout = None)
             self.spawn.close()
             logging.info("Done Solving")
             self.status = True
