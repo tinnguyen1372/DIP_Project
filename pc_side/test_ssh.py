@@ -18,7 +18,7 @@ logging.basicConfig(level=logging.INFO,
                     stream= sys.stdout)
 logging = logging.getLogger(__name__)
 
-class EV3():
+class SSH_Client():
     # Initialize User Config for SSH connection
     def __init__(self,**kw) :
         self.user = kw.get('username','robot')
@@ -56,27 +56,14 @@ class EV3():
  
             self.spawn.close()
             logging.info("Done Solving")
-            self.status = True
-            self.running = False
             return
         except Exception as e:
             logging.info("Failed to connect to EV3 with error: {}".format(e))
-            self.status = False
-            if not self.status and not self.running:
-                threading.Thread(target = self.run).start()
-                self.running = True
             return
 
-    def run(self):
-        while not self.status:
-            time.sleep(5)
-            logging.info("Attempting to start again")
-            self.spawn_ssh()
-        return
-
 # order = ["main.py",]
-ev3 = EV3(ip = ev3_ip)
-try:        
-    ev3.spawn_ssh(dir = directory, filename = file_to_run)
-except Exception as e:
-    logging.info("Error in execution: {}".format(e))
+# ev3 = SSH_Client(ip = ev3_ip)
+# try:        
+#     ev3.spawn_ssh(dir = directory, filename = file_to_run)
+# except Exception as e:
+#     logging.info("Error in execution: {}".format(e))
