@@ -225,26 +225,29 @@ import threading
 def mqtt_com(ip):
     logging.info("Connecting to {}".format(ip))
     client = mqtt.Client()
-    client.connect(ip,1883,60)
+    try:
+        client.connect(ip,1883,60)
 
-    client.on_connect = on_connect
-    client.on_message = on_message
-    client.loop_forever()
+        client.on_connect = on_connect
+        client.on_message = on_message
+        client.loop_forever()
+    except Exception as e:
+        logging.info("Cannot connect to {}. Please try again".format(ip))
 ########################################################################################################################
 # thread = threading.Thread(target= mqtt_com).start()
 import time
 def test_mqtt(ip):
     logging.info("Connecting to mqtt_com...")
-    # time.sleep(10)
-    mqtt_com(ip)
+    logging.info("Connecting to {}".format(ip))
     client = mqtt.Client()
-    client.connect(ip,1883,60)
+    try:
+        client.connect(ip,1883,60)
 
-    client.on_connect = on_connect
-    client.on_message = on_message
-    # print("inserting cubestring")
-    # global string_cube
-    # string_cube = 'DUUBULDBFRBFRRULLLBRDFFFBLURDBFDFDRFRULBLUFDURRBLBDUDL'
+        client.on_connect = on_connect
+        client.on_message = on_message
+        client.loop_forever()
+    except Exception as e:
+        logging.info("Cannot connect to {}. Please try again".format(ip))
     
 
 # thread = threading.Thread(target= test_mqtt).start()
