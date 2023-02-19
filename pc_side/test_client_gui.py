@@ -9,7 +9,11 @@ import twophase.cubie as cubie
 import twophase.solver as sv
 import twophase
 import queue
-
+import logging
+logging.basicConfig(level=logging.INFO,
+                        format='%(asctime)s %(levelname)8s: %(message)s',
+                    )
+logging = logging.getLogger(__name__)
 comque= queue.Queue()
 
 
@@ -18,7 +22,7 @@ comque= queue.Queue()
 max_length = 19
 time_out = 2
 #IP Address of the Broker (Bluetooth Network Connection)
-ev3_ip = "169.254.119.198"
+# ev3_ip = "169.254.119.198"
 string_cube = ""
 DEFAULT_DIRECTORY = "test_wed8"
 DEFAULT_FILE = "function_test"
@@ -218,10 +222,10 @@ def click(_event):
 import threading
 ##############
 # Connect to client
-def mqtt_com():
-    print("Connecting to {}:".format(ev3_ip))
+def mqtt_com(ip):
+    logging.info("Connecting to {}".format(ip))
     client = mqtt.Client()
-    client.connect(ev3_ip,1883,60)
+    client.connect(ip,1883,60)
 
     client.on_connect = on_connect
     client.on_message = on_message
@@ -229,12 +233,12 @@ def mqtt_com():
 ########################################################################################################################
 # thread = threading.Thread(target= mqtt_com).start()
 import time
-def test_mqtt():
-    print("test mqtt")
+def test_mqtt(ip):
+    logging.info("Connecting to mqtt_com...")
     # time.sleep(10)
-    mqtt_com()
+    mqtt_com(ip)
     client = mqtt.Client()
-    client.connect(ev3_ip,1883,60)
+    client.connect(ip,1883,60)
 
     client.on_connect = on_connect
     client.on_message = on_message
@@ -245,12 +249,18 @@ def test_mqtt():
 
 # thread = threading.Thread(target= test_mqtt).start()
 def mqtt_connect_button():
-    threading.Thread(target= test_mqtt).start()
+    ip = txt_ip.get("1.0",'end-1c')
+    threading.Thread(target= test_mqtt,args=(ip,)).start()
 
 from test_ssh import *
 def ssh_client_connect():
-    ev3 = SSH_Client(ip = ev3_ip)
+    ip = txt_ip.get("1.0",'end-1c')
+    directory = txt_directory.get("1.0",'end-1c')
+    file_to_run = txt_file.get("1.0",'end-1c')
+
+    ev3 = SSH_Client(ip = ip)
     try:        
+        logging.info("Running file {}.py from directory /home/robot/{}".format(file_to_run,directory))
         ev3.spawn_ssh(dir = directory, filename = file_to_run)
     except Exception as e:
         logging.info("Error in execution: {}".format(e))
@@ -268,19 +278,19 @@ hp = Label(text='Remote SSH connection', font=("Arial", 9, "bold"))
 hp_window = canvas.create_window(10 + 0 * width, -25+ 0.6 * width, anchor=NW, window=hp)
 hp = Label(text='EV3 IP address', font=("", 7))
 hp_window1 = canvas.create_window(10 + 0 * width, -25+ 0.9 * width, anchor=NW, window=hp)
-txt_host = Text(height=1, width=20)
-txt_host.insert(INSERT, DEFAULT_IP)
-txt_host_window = canvas.create_window(10 + 0 * width, -25+ 1.2 * width, anchor=NW, window=txt_host)
+txt_ip = Text(height=1, width=20)
+txt_ip.insert(INSERT, DEFAULT_IP)
+txt_ip_window = canvas.create_window(10 + 0 * width, -25+ 1.2 * width, anchor=NW, window=txt_ip)
 hp = Label(text='EV3 directory', font=("", 7))
 hp_window2 = canvas.create_window(10 + 0 * width, -25+ 1.5 * width, anchor=NW, window=hp)
-txt_port = Text(height=1, width=20)
-txt_port_window = canvas.create_window(10 + 0 * width,-25+ 1.8 * width, anchor=NW, window=txt_port)
+txt_directory = Text(height=1, width=20)
+txt_directory_window = canvas.create_window(10 + 0 * width,-25+ 1.8 * width, anchor=NW, window=txt_directory)
 hp = Label(text='EV3 file name', font=("", 7))
 hp_window3 = canvas.create_window(10 + 0 * width, -25+ 2.1 * width, anchor=NW, window=hp)
-txt_port.insert(INSERT, DEFAULT_DIRECTORY)
-txt_ip = Text(height=1, width=20)
-txt_ip_window = canvas.create_window(10 + 0 * width, -25+ 2.4 * width, anchor=NW, window=txt_ip)
-txt_ip.insert(INSERT, DEFAULT_FILE)
+txt_directory.insert(INSERT, DEFAULT_DIRECTORY)
+txt_file = Text(height=1, width=20)
+txt_file_window = canvas.create_window(10 + 0 * width, -25+ 2.4 * width, anchor=NW, window=txt_file)
+txt_file.insert(INSERT, DEFAULT_FILE)
 bsolve = Button(root,text="Scan & Solve", height=2, width=10, relief=RAISED, command=ssh_client_button)
 bsolve_window = canvas.create_window(10 + 1.5 * width, -25 + 2.8 * width, anchor=NW, window=bsolve)
 bsolve = Button(root,text="PC Connect", height=2, width=10, relief=RAISED, command=mqtt_connect_button)
