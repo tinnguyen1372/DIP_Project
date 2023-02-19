@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-ev3_ip = "169.254.182.148"
+ev3_ip = "169.254.24.39"
 directory = "test_wed8"
 file_to_run = "function_test"
 
@@ -46,7 +46,8 @@ class SSH_Client():
             time.sleep(1)
             logging.info("Logged in EV3")
             logging.info("Running {}.py in {}".format(filename,dir))
-            self.spawn.sendline(f"python3 ./{dir}/{filename}.py")
+            # self.spawn.sendline(f"python3 ./{dir}/{filename}.py")
+            self.spawn.sendline(f"brickrun --directory='/home/robot/{dir}' '/home/robot/{dir}/{filename}.py'")
             self.spawn.expect("\n",timeout = None)
             self.spawn.expect("\n", timeout = None)
             self.spawn.expect("\n",timeout = None)

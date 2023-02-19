@@ -26,11 +26,11 @@ time_out = 2
 string_cube = ""
 DEFAULT_DIRECTORY = "test_wed8"
 DEFAULT_FILE = "function_test"
-DEFAULT_IP = "169.254.182.148"
+DEFAULT_IP = "0.0.0.0"
 
 def on_connect(client, userdata, flags, rc):
-  print("Connected with result code "+str(rc))
-  client.subscribe("topic/ev3_to_pc")
+    print("Connected with result code "+str(rc))
+    client.subscribe("topic/ev3_to_pc")
 
 def on_message(client, userdata, msg):
   dict = str(msg.payload.decode('utf-8'))
@@ -170,11 +170,11 @@ def visualise(event):
     # fc is already modified to match the rubik's face of the app
     idx = 0
     for f in range(6):
-        center_cubie = cols[f][1][1]
+        # center_cubie = cols[f][1][1]
         for row in range(3):
             for col in range(3):
-                print(cols[fc.f[idx]]) # red, yellow etc.
-                print(type(cols[fc.f[idx]])) # string
+                # print(cols[fc.f[idx]]) # red, yellow etc.
+                # print(type(cols[fc.f[idx]])) # string
                 canvas.itemconfig(facelet_id[f][row][col], fill=cols[fc.f[idx]])
                 idx += 1
     
@@ -226,11 +226,10 @@ def mqtt_com(ip):
     logging.info("Connecting to {}".format(ip))
     client = mqtt.Client()
     try:
-        client.connect(ip,1883,60)
-
-        client.on_connect = on_connect
-        client.on_message = on_message
-        client.loop_forever()
+            client.connect(ip,1883,60)
+            client.on_connect = on_connect
+            client.on_message = on_message
+            client.loop_forever()
     except Exception as e:
         logging.info("Cannot connect to {}. Please try again".format(ip))
 ########################################################################################################################
@@ -245,6 +244,8 @@ def test_mqtt(ip):
 
         client.on_connect = on_connect
         client.on_message = on_message
+        global DEFAULT_IP
+        DEFAULT_IP = ip
         client.loop_forever()
     except Exception as e:
         logging.info("Cannot connect to {}. Please try again".format(ip))
@@ -253,7 +254,10 @@ def test_mqtt(ip):
 # thread = threading.Thread(target= test_mqtt).start()
 def mqtt_connect_button():
     ip = txt_ip.get("1.0",'end-1c')
-    threading.Thread(target= test_mqtt,args=(ip,)).start()
+    if ip != DEFAULT_IP:
+        threading.Thread(target= test_mqtt,args=(ip,)).start()
+    else:
+        logging.info("Already connected to {}".format(DEFAULT_IP))
 
 from test_ssh import *
 def ssh_client_connect():
@@ -296,7 +300,7 @@ txt_file_window = canvas.create_window(10 + 0 * width, -25+ 2.4 * width, anchor=
 txt_file.insert(INSERT, DEFAULT_FILE)
 bsolve = Button(root,text="Run File", height=2, width=10, relief=RAISED, command=ssh_client_button)
 bsolve_window = canvas.create_window(10 + 1.5 * width, -25 + 2.8 * width, anchor=NW, window=bsolve)
-bsolve = Button(root,text="PC Connect", height=2, width=10, relief=RAISED, command=mqtt_connect_button)
+bsolve = Button(root,text="PC Server", height=2, width=10, relief=RAISED, command=mqtt_connect_button)
 bsolve_window = canvas.create_window(10 +0* width, -25 + 2.8 * width, anchor=NW, window=bsolve)
 
 
@@ -312,7 +316,7 @@ display = Text(root,height=7, width=39)
 text_window = canvas.create_window(10 + 6.5 * width, 10 + .5 * width, anchor=NW, window=display)
 canvas.bind("<Button-1>", click)
 create_facelet_rects(width)
-create_colorpick_rects(width)
+# create_colorpick_rects(width)
 
 root.bind('<<TimeChanged>>', visualise)
 
