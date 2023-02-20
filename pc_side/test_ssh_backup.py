@@ -39,8 +39,10 @@ class SSH_Client():
             logging.info(f'SSH-ing to {self.user}@{self.ip} with password {self.password}')
             # self.spawn = pexpect.spawn(f'ssh {self.user}@{self.ip}',timeout=10)
             # self.spawn = pexpect.popen_spawn.PopenSpawn(f'ssh {self.user}@{self.ip}', encoding = 'utf-8')
-            self.spawn = wexpect.spawn(f'ssh -o StrictHostKeyChecking=no {self.user}@{self.ip}',encoding = 'utf-8',timeout = 30)
+            self.spawn = wexpect.spawn(f'ssh {self.user}@{self.ip}',encoding = 'utf-8',timeout = 30)
             self.spawn.logfile = sys.stdout
+            if  self.spawn.expect("(yes/no/[fingerprint])?", timeout = 5):
+                self.spawn.sendline("yes")            
             self.spawn.expect("Password:")
             self.spawn.sendline(self.password)
             time.sleep(1)
