@@ -16,6 +16,7 @@ logging.basicConfig(level=logging.INFO,
 logging = logging.getLogger(__name__)
 comque= queue.Queue()
 
+cube = RubiksColorSolverGeneric(3)
 
 # This is the Subscriber
 # Constant
@@ -23,10 +24,12 @@ max_length = 19
 time_out = 2
 #IP Address of the Broker (Bluetooth Network Connection)
 # ev3_ip = "169.254.119.198"
-string_cube = ""
 DEFAULT_DIRECTORY = "test_wed8"
 DEFAULT_FILE = "function_test"
-DEFAULT_IP = "0.0.0.0"
+DEFAULT_IP = "169.254.114.142"
+STRING_CUBE = "" # save the scanned rubik (not for visualisation)
+GOAL_STRING = "" # for the solveto method
+METHOD = 1 
 
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
@@ -34,14 +37,14 @@ def on_connect(client, userdata, flags, rc):
 
 def on_message(client, userdata, msg):
   dict = str(msg.payload.decode('utf-8'))
-  cube = RubiksColorSolverGeneric(3)
-#   global string_cube
+#   global cube
   try:
+    cube = RubiksColorSolverGeneric(3)
     cube.enter_scan_data(json.loads(dict))
     cube.crunch_colors()
     output = "".join(cube.cube_for_kociemba_strict())
-    global string_cube
-    string_cube = output
+    global STRING_CUBE
+    STRING_CUBE = output
     cube.print_cube()
     comque.put(output)
     # visualise()
@@ -50,14 +53,45 @@ def on_message(client, userdata, msg):
     print(e)
     output = e
   cube = None
-
 #   string_cube = output
 #   visualise(output)
-  method = 1 # 1 for Two phase Kociemba, 2 for Korf
-  solution = solver.solve(max_length, time_out, output, method)
+#   method = 1 # 1 for Two phase Kociemba, 2 for Korf
+  method = 1
+  if (dropdown.get() == "Kociemba's algorithm"): method = 1
+  elif dropdown.get() == "Korf's algorithm": method = 2
+  elif dropdown.get() == "Solve to chosen pattern": method = 3
+  solution = solver.solve(max_length, time_out, STRING_CUBE, method,  solveToString.get("1.0",'end-1c')) # default is Kociemba
   client.publish("topic/pc_to_ev3", solution)
   #client.disconnect()
+
+def on_message_scanOnly(client, userdata, msg):
+  dict = str(msg.payload.decode('utf-8'))
+  print("Using scanOnly method")
+#   global string_cube
+  cube = RubiksColorSolverGeneric(3)
+  try:
+    cube.enter_scan_data(json.loads(dict))
+    cube.crunch_colors()
+    output = "".join(cube.cube_for_kociemba_strict())
+    global STRING_CUBE
+    STRING_CUBE = output
+    cube.print_cube()
+    comque.put(STRING_CUBE)
+    # visualise()
+    root.event_generate('<<TimeChanged>>', when='tail')
+  except Exception as e:
+    print(e)
+    output = e
+  cube = None
+  global GOAL_STRING
+  GOAL_STRING = solveToString.get("1.0",'end-1c')
+  print("Will solve to {}".format(GOAL_STRING))
+  solution = solver.solve(max_length, time_out, STRING_CUBE, METHOD, GOAL_STRING)
+  client.publish("topic/pc_to_ev3", solution)
+  
+  #client.disconnect()
     
+
 
 # ################ A simple graphical interface which communicates with the server #####################################
 
@@ -126,20 +160,51 @@ def get_definition_string():
 # ###################################### Solve the displayed cube ######################################################
 
 
-def solvex():
-    try:
-        # convert from cubestring to color here
-        defstr = get_definition_string()
-        # or just put the defstr directly here
-    except BaseException as e:
-        show_text('Invalid facelet configuration.\nWrong or missing colors. ' + e.__doc__)
-        return
-    show_text(defstr + '\n')
-    show_text(sv.solve(defstr,19,2) + '\n')
+# def solvex():
+#     try:
+#         # convert from cubestring to color here
+#         defstr = get_definition_string()
+#         # or just put the defstr directly here
+#     except BaseException as e:
+#         show_text('Invalid facelet configuration.\nWrong or missing colors. ' + e.__doc__)
+#         return
+#     show_text(defstr + '\n')
+#     show_text(sv.solve(defstr,19,2) + '\n')
 
-########################################################################################################################
+# def advanced_solve():
+#     logging.info("Connecting to mqtt_com...")
+#     ip = txt_ip.get("1.0",'end-1c')
+#     ssh_client_button()
+#     # ev3 = SSH_Client(ip = ip)
+#     # ev3.spawn_ssh(dir = directory, filename = "function_test")
+#     global commonClient
+    
+#     # global commonClient
+#     # client = mqtt.Client()
+#     try:
+#         commonClient.connect(ip,1883,60)
+#         commonClient.on_connect = on_connect
+#         commonClient.on_message = on_message
+#         commonClient.loop_forever()
+#     # try:
+#     #     commonClient.subscribe("topic/ev3_to_pc")
+#     #     cube.enter_scan_data(json.loads(dict))
+#     #     cube.crunch_colors()
+#     #     output = "".join(cube.cube_for_kociemba_strict())
+#     #     global STRING_CUBE
+#     #     STRING_CUBE = output
+        
+#     except Exception as e:
+#         logging.info("Scan-only operation error")
+#     # global GOAL_STRING
+#     # GOAL_STRING = solveToString.get("1.0",'end-1c')
+#     # print("Will solve to {}".format(GOAL_STRING))
+#     # solution = solver.solve(max_length, time_out, STRING_CUBE, METHOD, GOAL_STRING)
+#     # commonClient.publish("topic/pc_to_ev3", solution)
+    
+# ########################################################################################################################
 
-# ################################# Functions to change the facelet colors #############################################
+# # ################################# Functions to change the facelet colors #############################################
 
 
 def clean():
@@ -220,32 +285,22 @@ def click(_event):
 
 import threading
 ##############
-# Connect to client
-def mqtt_com(ip):
-    logging.info("Connecting to {}".format(ip))
-    client = mqtt.Client()
-    try:
-            client.connect(ip,1883,60)
-            client.on_connect = on_connect
-            client.on_message = on_message
-            client.loop_forever()
-    except Exception as e:
-        logging.info("Cannot connect to {}. Please try again".format(ip))
 ########################################################################################################################
 # thread = threading.Thread(target= mqtt_com).start()
 import time
 def test_mqtt(ip):
     logging.info("Connecting to mqtt_com...")
     logging.info("Connecting to {}".format(ip))
-    client = mqtt.Client()
+    commonClient = mqtt.Client()
+    # client = mqtt.Client()
     try:
-        client.connect(ip,1883,60)
-
-        client.on_connect = on_connect
-        client.on_message = on_message
+        commonClient.connect(ip,1883,60)
+        commonClient.on_connect = on_connect
+        commonClient.on_message = on_message
+       
         global DEFAULT_IP
         DEFAULT_IP = ip
-        client.loop_forever()
+        commonClient.loop_forever()
     except Exception as e:
         logging.info("Cannot connect to {}. Please try again".format(ip))
     
@@ -258,7 +313,7 @@ def mqtt_connect_button():
     else:
         logging.info("Already connected to {}".format(DEFAULT_IP))
 
-from SSH_Client import SSH_Client
+from SSH_Client import *
 def ssh_client_connect():
     ip = txt_ip.get("1.0",'end-1c')
     directory = txt_directory.get("1.0",'end-1c')
@@ -303,16 +358,47 @@ bsolve = Button(root,text="PC Server", height=2, width=10, relief=RAISED, comman
 bsolve_window = canvas.create_window(10 +0* width, -25 + 2.8 * width, anchor=NW, window=bsolve)
 
 
-bsolve = Button(root,text="Solve", height=2, width=10, relief=RAISED, command=solvex)
-bsolve_window = canvas.create_window(10 + 10.5 * width, 10 + 6.5 * width, anchor=NW, window=bsolve)
+# bsolve = Button(root,text="Solve", height=2, width=10, relief=RAISED, command=advanced_solve)
+# bsolve_window = canvas.create_window(10 + 10.5 * width, 10 + 6.5 * width, anchor=NW, window=bsolve)
 bclean = Button(root,text="Clean", height=1, width=10, relief=RAISED, command=clean)
 bclean_window = canvas.create_window(10 + 10.5 * width, 10 + 7.5 * width, anchor=NW, window=bclean)
 bempty = Button(root,text="Empty", height=1, width=10, relief=RAISED, command=empty)
 bempty_window = canvas.create_window(10 + 10.5 * width, 10 + 8 * width, anchor=NW, window=bempty)
 brandom = Button(root,text="Random", height=1, width=10, relief=RAISED, command=random)
 brandom_window = canvas.create_window(10 + 10.5 * width, 10 + 8.5 * width, anchor=NW, window=brandom)
-display = Text(root,height=7, width=39)
-text_window = canvas.create_window(10 + 6.5 * width, 10 + .5 * width, anchor=NW, window=display)
+display = Text(root,height=7, width=29)
+text_window = canvas.create_window(100 + 6.5 * width, 10 + .5 * width, anchor=NW, window=display)
+
+
+def option_changed(self, *args):
+    global dropdown
+    global METHOD
+    temp_res = dropdown.get()
+    print("User select", temp_res)
+    print(type(temp_res))
+    if (temp_res == "Kociemba's algorithm"): METHOD = 1
+    elif temp_res == "Korf's algorithm": METHOD = 2
+    elif temp_res == "Solve to chosen pattern": METHOD = 3
+
+label_algo = Label(text='Select advanced algorithm/function', font=("Arial", 9, "bold"))
+hp_window = canvas.create_window(50 + 5.5 * width, 10+6.5*width, anchor=NW, window=label_algo)
+dropdown = StringVar(root)
+dropdown.set("Kociemba's algorithm") # default value
+option_dropdown = OptionMenu(
+    root, 
+    dropdown, "Kociemba's algorithm", "Korf's algorithm", "Solve to chosen pattern",
+    command = option_changed)
+option_dropdown.pack()
+dropdown_window = canvas.create_window(50+6.5*width, 10+6.5*width, anchor = NW, window = option_dropdown)
+
+
+
+
+solveToString = Text(height=1, width=20)
+solveToString_window = canvas.create_window(50+6.5* width, 30+ 6.5 * width, anchor=NW, window=solveToString)
+solveToString.insert(INSERT, GOAL_STRING)
+
+
 canvas.bind("<Button-1>", click)
 create_facelet_rects(width)
 # create_colorpick_rects(width)
