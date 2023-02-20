@@ -14,8 +14,7 @@ from pexpect.popen_spawn import PopenSpawn
 import wexpect
 
 logging.basicConfig(level=logging.INFO,
-                        format='%(asctime)s %(levelname)8s: %(message)s',
-                    stream= sys.stdout)
+                        format='%(asctime)s %(levelname)8s: %(message)s',)
 logging = logging.getLogger(__name__)
 
 class SSH_Client():
@@ -40,7 +39,6 @@ class SSH_Client():
             # self.spawn = pexpect.spawn(f'ssh {self.user}@{self.ip}',timeout=10)
             # self.spawn = pexpect.popen_spawn.PopenSpawn(f'ssh {self.user}@{self.ip}', encoding = 'utf-8')
             self.spawn = wexpect.spawn(f'ssh -o StrictHostKeyChecking=no {self.user}@{self.ip}',encoding = 'utf-8',timeout = 30)
-            self.spawn.logfile = sys.stdout
             self.spawn.expect("Password:")
             self.spawn.sendline(self.password)
             time.sleep(1)
