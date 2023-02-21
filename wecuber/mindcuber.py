@@ -3,7 +3,6 @@
 from ev3dev2.motor import LargeMotor, MediumMotor, OUTPUT_A, OUTPUT_B, OUTPUT_C, SpeedDPS
 from ev3dev2.sensor.lego import ColorSensor, InfraredSensor, UltrasonicSensor
 from pprint import pformat
-#from rubikscolorresolver.solver import RubiksColorSolverGeneric
 from subprocess import check_output
 from time import sleep
 import json
@@ -33,6 +32,7 @@ class MindCuber(object):
     rotate_speed = 400
     flip_speed = 300
     flip_speed_push = 400
+    color_arm_offset =[10,15,20,15,15,10,10,0] #corner,edge #10,15,20,15,15,10,0,0
 
     def __init__(self):
         self.shutdown = False
@@ -141,7 +141,7 @@ class MindCuber(object):
 
         # OVERROTATE depends on lot on MindCuber.rotate_speed
         current_pos = self.turntable.position
-        OVERROTATE = 40
+        OVERROTATE = 50
         final_pos = int(135 * round((current_pos + (270 * direction * nb)) / 135.0))
         temp_pos = int(final_pos + (OVERROTATE * direction))
 
@@ -218,7 +218,7 @@ class MindCuber(object):
 
     def colorarm_middle(self):
         log.info("colorarm_middle()")
-        self.colorarm.on_to_position(SpeedDPS(600), -750)
+        self.colorarm.on_to_position(SpeedDPS(600), -780)
 
     def colorarm_corner(self, square_index):
         """
@@ -227,18 +227,8 @@ class MindCuber(object):
         log.info("colorarm_corner(%d)" % square_index)
         position_target = -580
 
-        if square_index == 1:
-            position_target -= 10
-
-        elif square_index == 3:
-            position_target -= 25
-
-        elif square_index == 5:
-            position_target -= 20
-
-        elif square_index == 7:
-            pass
-
+        if square_index % 2 == 1:
+            position_target -= self.color_arm_offset[square_index - 1]
         else:
             raise ScanError("colorarm_corner was given unsupported square_index %d" % square_index)
 
@@ -251,18 +241,8 @@ class MindCuber(object):
         log.info("colorarm_edge(%d)" % square_index)
         position_target = -640
 
-        if square_index == 2:
-            position_target -= 15
-
-        elif square_index == 4:
-            position_target -= 15
-
-        elif square_index == 6:
-            position_target -= 15
-
-        elif square_index == 8:
-            pass
-
+        if square_index % 2 == 0:
+            position_target -= self.color_arm_offset[square_index - 1]
         else:
             raise ScanError("colorarm_edge was given unsupported square_index %d" % square_index)
 
@@ -378,24 +358,6 @@ class MindCuber(object):
             return
 
         log.info("RGB json:\n%s\n" % json.dumps(self.colors))
-        #self.rgb_solver = RubiksColorSolverGeneric(3)
-        # self.rgb_solver.enter_scan_data(self.colors)
-        # self.rgb_solver.crunch_colors()
-        # self.cube_kociemba = self.rgb_solver.cube_for_kociemba_strict()
-        # log.info("Final Colors (kociemba): %s" % ''.join(self.cube_kociemba))
-
-        # This is only used if you want to rotate the cube so U is on top, F is
-        # in the front, etc. You would do this if you were troubleshooting color
-        # detection and you want to pause to compare the color pattern on the
-        # cube vs. what we think the color pattern is.
-        '''
-        log.info("Position the cube so that U is on top, F is in the front, etc...to make debugging easier")
-        self.rotate_cube(-1, 1)
-        self.flip()
-        self.flipper_away()
-        self.rotate_cube(1, 1)
-        input('Paused')
-        '''
 
     def move(self, face_down):
         log.info("move() face_down %s" % face_down)
@@ -423,15 +385,6 @@ class MindCuber(object):
         total_actions = len(actions)
 
         for (i, a) in enumerate(actions):
-            # if a.endswith("3"):
-            #     face_down = list(a)[0]
-            #     rotation_dir = 1
-            # elif a.endswith("2"):
-            #     face_down = list(a)[0]
-            #     rotation_dir = 2
-            # elif a.endswith("1"):
-            #     face_down = list(a)[0]
-            #     rotation_dir = 3
             face_down = list(a)[0]
             rotation_dir = 4 - int(a[-1])
 
@@ -451,16 +404,6 @@ class MindCuber(object):
 
         if self.shutdown:
             return
-
-        # cmd = ['kociemba', ''.join(map(str, self.cube_kociemba))]
-        # output = check_output(cmd).decode('ascii')
-
-        # if 'ERROR' in output:
-        #     msg = "'%s' returned the following error\n%s\n" % (' '.join(cmd), output)
-        #     log.error(msg)
-        #     print(msg)
-        #     sys.exit(1)
-
         actions = output.strip().split()
         self.run_kociemba_actions(actions)
         self.cube_done()
@@ -478,13 +421,9 @@ class MindCuber(object):
             if self.shutdown:
                 break
 
-            #dist = self.infrared_sensor.proximity
             dist = self.ultrasonic_sensor.distance_centimeters
 
-            # It is odd but sometimes when the cube is inserted
-            # the IR sensor returns a value of 100...most of the
-            # time it is just a value less than 50
-            if dist < 35 or dist == 70:
+            if dist < 12 or dist == 9:
                 rubiks_present += 1
                 log.info("wait for cube...distance %d, present for %d/%d" %
                          (dist, rubiks_present, rubiks_present_target))

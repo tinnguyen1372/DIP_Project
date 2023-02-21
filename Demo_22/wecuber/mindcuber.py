@@ -32,7 +32,7 @@ class MindCuber(object):
     rotate_speed = 400
     flip_speed = 300
     flip_speed_push = 400
-    color_arm_offset =[10,15,20,15,15,0,0,0] #corner,edge #10,15,20,15,15,10,0,0
+    color_arm_offset =[10,15,20,15,15,10,10,0] #corner,edge #10,15,20,15,15,10,0,0
 
     def __init__(self):
         self.shutdown = False
@@ -141,7 +141,7 @@ class MindCuber(object):
 
         # OVERROTATE depends on lot on MindCuber.rotate_speed
         current_pos = self.turntable.position
-        OVERROTATE = 40
+        OVERROTATE = 50
         final_pos = int(135 * round((current_pos + (270 * direction * nb)) / 135.0))
         temp_pos = int(final_pos + (OVERROTATE * direction))
 
