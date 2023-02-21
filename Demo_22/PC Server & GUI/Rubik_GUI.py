@@ -24,9 +24,9 @@ time_out = 2
 #IP Address of the Broker (Bluetooth Network Connection)
 # ev3_ip = "169.254.119.198"
 string_cube = ""
-DEFAULT_DIRECTORY = "test_wed8"
+DEFAULT_DIRECTORY = "wecuber"
 DEFAULT_FILE = "function_test"
-DEFAULT_IP = "0.0.0.0"
+DEFAULT_IP = "169.254."
 
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))

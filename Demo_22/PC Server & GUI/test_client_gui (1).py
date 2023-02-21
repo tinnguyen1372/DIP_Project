@@ -248,7 +248,7 @@ def random():
     cc = cubie.CubieCube()
     cc.randomize()
     fc = cc.to_facelet_cube()
-    print(type(fc) )
+    # print(type(fc) )
     idx = 0
     for f in range(6):
         for row in range(3):
