@@ -24,9 +24,9 @@ max_length = 19
 time_out = 2
 #IP Address of the Broker (Bluetooth Network Connection)
 # ev3_ip = "169.254.119.198"
-DEFAULT_DIRECTORY = "test_wed8"
+DEFAULT_DIRECTORY = "wecuber"
 DEFAULT_FILE = "function_test"
-DEFAULT_IP = "169.254.114.142"
+DEFAULT_IP = "169.254."
 STRING_CUBE = "" # save the scanned rubik (not for visualisation)
 GOAL_STRING = "" # for the solveto method
 METHOD = 1 
