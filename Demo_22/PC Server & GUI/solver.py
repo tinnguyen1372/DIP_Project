@@ -10,9 +10,12 @@ def solve(max_length, time_out, cubestring, method, goalstring):
         solution = twophase.solve(cubestring,max_length,time_out)
         solution = solution[:solution.strip().rfind(" ")]
         print("Result from Kociemba method: {}".format(solution))
-    # elif method == 2: # Korf algorithm
-    #     solution = korf.solve(cubestring)
-    #     solution = solution[:solution.strip().rfind(" ")]
+    elif method == 2: # Korf algorithm
+        # solution = korf.solve(cubestring)
+        # solution = solution[:solution.strip().rfind(" ")]
+        solution = twophase.solve(cubestring,max_length,time_out)
+        solution = solution[:solution.strip().rfind(" ")]
+        print("Result from Kociemba method: {}".format(solution))
     elif method == 3: # SolveTo using two phase algorithm
         print("Trying to solve to: {}".format(goalstring))
         print(len(goalstring))
