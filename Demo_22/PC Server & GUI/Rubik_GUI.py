@@ -364,6 +364,7 @@ def ssh_client_button():
 
 root = Tk()
 root.wm_title("Solver Client")
+root.iconbitmap("Rubik.ico")
 canvas = Canvas(root, width=12 * width + 20, height=9 * width + 20)
 canvas.pack()
 
