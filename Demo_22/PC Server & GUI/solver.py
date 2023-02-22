@@ -2,7 +2,7 @@
 import twophase.solver as twophase
 # import optimal.solver as korf
 
-def solve(max_length, time_out, cubestring, method, goalstring= "FBRRUFRFULRFLRLUDUBLBUFDDBFLRRRDBBDRLUDULFDDFDUUBBLBFL"):
+def solve(max_length, time_out, cubestring, method, goalstring):
     print("Recieved scramble from EV3: {}".format(cubestring))
     print('Solving...')
     solution = ""
@@ -15,6 +15,7 @@ def solve(max_length, time_out, cubestring, method, goalstring= "FBRRUFRFULRFLRL
     #     solution = solution[:solution.strip().rfind(" ")]
     elif method == 3: # SolveTo using two phase algorithm
         print("Trying to solve to: {}".format(goalstring))
+        print(len(goalstring))
         solution = twophase.solveto(cubestring, goalstring)
         solution = solution[:solution.strip().rfind(" ")]
         print("Result from solveto method: {}".format(solution))
