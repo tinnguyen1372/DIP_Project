@@ -30,6 +30,7 @@ DEFAULT_IP = "169.254."
 STRING_CUBE = "" # save the scanned rubik (not for visualisation)
 GOAL_STRING = "" # for the solveto method
 METHOD = 1 
+IS_RANDOM = FALSE
 
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
@@ -57,7 +58,8 @@ def on_message(client, userdata, msg):
 #   visualise(output)
 #   method = 1 # 1 for Two phase Kociemba, 2 for Korf
   method = 1
-  if (dropdown.get() == "Kociemba's algorithm"): method = 1
+  if (dropdown.get() == "Kociemba's algorithm"): 
+      method = 1
   elif dropdown.get() == "Korf's algorithm": method = 2
   elif dropdown.get() == "Solve to chosen pattern": method = 3
   solution = solver.solve(max_length, time_out, STRING_CUBE, method,  solveToString.get("1.0",'end-1c')) # default is Kociemba
@@ -113,6 +115,20 @@ def show_text(txt):
     """Display messages."""
     print(txt)
     display.insert(INSERT, txt)
+    root.update_idletasks()
+
+def show_text_random(txt):
+    """Display messages."""
+    print(txt)
+    solveToString.delete("1.0","end")
+    solveToString.insert(INSERT, txt)
+    root.update_idletasks()
+
+def show_text_log(txt):
+    """Display messages."""
+    print(txt)
+    logText.delete("1.0","end")
+    logText.insert(INSERT, txt)
     root.update_idletasks()
 
 
@@ -213,6 +229,7 @@ def clean():
         for row in range(3):
             for col in range(3):
                 canvas.itemconfig(facelet_id[f][row][col], fill=canvas.itemcget(facelet_id[f][1][1], "fill"))
+    show_text_log("Cube visualisation cleaned successfully!")
 
 
 def empty():
@@ -222,9 +239,12 @@ def empty():
             for col in range(3):
                 if row != 1 or col != 1:
                     canvas.itemconfig(facelet_id[f][row][col], fill="grey")
+    show_text_log("Cube visualisation emptied successfully!")
 
 def visualise(event):
     # global string_cube
+    if not IS_RANDOM:
+        return
     temp_cubestring = comque.get()
     print("visualising ")
     # print(string_cube)
@@ -245,10 +265,14 @@ def visualise(event):
 
 def random():
     """Generate a random cube and set the corresponding facelet colors."""
+    if (METHOD!=3): 
+        show_text_log("Random is only available for solve to method! ")
+        return
     cc = cubie.CubieCube()
     cc.randomize()
     fc = cc.to_facelet_cube()
-    # print(type(fc) )
+    print(type(fc) )
+    
     idx = 0
     for f in range(6):
         for row in range(3):
@@ -262,6 +286,8 @@ def random():
                 # blue -> red
                 # orange -> green
                 # red-> blue
+    show_text_random(get_definition_string()+"\n")
+    show_text_log("Randomize the cube succesfully. Click run file button to solve.")
 ########################################################################################################################
 
 # ################################### Edit the facelet colors ##########################################################
@@ -310,8 +336,10 @@ def mqtt_connect_button():
     ip = txt_ip.get("1.0",'end-1c')
     if ip != DEFAULT_IP:
         threading.Thread(target= test_mqtt,args=(ip,)).start()
+        show_text_log("Connected to {} successfully. Click Run File to start scanning & solving".format(DEFAULT_IP))
     else:
         logging.info("Already connected to {}".format(DEFAULT_IP))
+        show_text_log("Already connected to {}".format(DEFAULT_IP))
 
 from SSH_Client import *
 def ssh_client_connect():
@@ -328,6 +356,7 @@ def ssh_client_connect():
     
 def ssh_client_button():
     threading.Thread(target= ssh_client_connect).start()
+    show_text_log("Started scanning process ...")
     
 
 root = Tk()
@@ -354,9 +383,8 @@ txt_file_window = canvas.create_window(10 + 0 * width, -25+ 2.4 * width, anchor=
 txt_file.insert(INSERT, DEFAULT_FILE)
 bsolve = Button(root,text="Run File", height=2, width=10, relief=RAISED, command=ssh_client_button)
 bsolve_window = canvas.create_window(10 + 1.5 * width, -25 + 2.8 * width, anchor=NW, window=bsolve)
-bsolve = Button(root,text="PC Server", height=2, width=10, relief=RAISED, command=mqtt_connect_button)
+bsolve = Button(root,text="Connect", height=2, width=10, relief=RAISED, command=mqtt_connect_button)
 bsolve_window = canvas.create_window(10 +0* width, -25 + 2.8 * width, anchor=NW, window=bsolve)
-
 
 # bsolve = Button(root,text="Solve", height=2, width=10, relief=RAISED, command=advanced_solve)
 # bsolve_window = canvas.create_window(10 + 10.5 * width, 10 + 6.5 * width, anchor=NW, window=bsolve)
@@ -376,9 +404,19 @@ def option_changed(self, *args):
     temp_res = dropdown.get()
     print("User select", temp_res)
     print(type(temp_res))
-    if (temp_res == "Kociemba's algorithm"): METHOD = 1
-    elif temp_res == "Korf's algorithm": METHOD = 2
-    elif temp_res == "Solve to chosen pattern": METHOD = 3
+    if (temp_res == "Kociemba's algorithm"): 
+        METHOD = 1
+        IS_RANDOM = False
+        clean()
+        show_text_random("")
+    elif temp_res == "Korf's algorithm": 
+        METHOD = 2
+        IS_RANDOM = False
+        clean()
+        show_text_random("")
+    elif temp_res == "Solve to chosen pattern":
+        METHOD = 3
+        IS_RANDOM = True
 
 label_algo = Label(text='Select advanced algorithm/function', font=("Arial", 9, "bold"))
 hp_window = canvas.create_window(50 + 5.5 * width, 10+6.5*width, anchor=NW, window=label_algo)
@@ -394,13 +432,18 @@ dropdown_window = canvas.create_window(50+6.5*width, 10+6.5*width, anchor = NW, 
 
 
 
-solveToString = Text(height=1, width=20)
+solveToString = Text(height=2, width=20)
 solveToString_window = canvas.create_window(50+6.5* width, 30+ 6.5 * width, anchor=NW, window=solveToString)
 solveToString.insert(INSERT, GOAL_STRING)
 
 
+logText = Text(height=3, width=20)
+logText_window = canvas.create_window(50+6.5* width, 80+ 6.5 * width, anchor=NW, window=logText)
+
+
 canvas.bind("<Button-1>", click)
 create_facelet_rects(width)
+clean()
 # create_colorpick_rects(width)
 
 root.bind('<<TimeChanged>>', visualise)
