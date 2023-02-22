@@ -62,7 +62,7 @@ def on_message(client, userdata, msg):
       method = 1
   elif dropdown.get() == "Korf's algorithm": method = 2
   elif dropdown.get() == "Solve to chosen pattern": method = 3
-  solution = solver.solve(max_length, time_out, STRING_CUBE, method,  solveToString.get("1.0",'end-1c')) # default is Kociemba
+  solution = solver.solve(max_length, time_out, STRING_CUBE, method,  solveToString.get("1.0",'end-1c').strip()) # default is Kociemba
   client.publish("topic/pc_to_ev3", solution)
   #client.disconnect()
 
