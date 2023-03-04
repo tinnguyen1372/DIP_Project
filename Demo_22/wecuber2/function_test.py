@@ -41,6 +41,7 @@ def solve(scan_try):
         mcube.resolve(result)
     except:
         if not scan_try:
+            mcube.on_scan_error()
             log.info("Scan Error /n Scanning Again...")
             solve(1)            
         else:

@@ -407,6 +407,13 @@ class MindCuber(object):
         actions = output.strip().split()
         self.run_kociemba_actions(actions)
         self.cube_done()
+        
+    def on_scan_error(self):
+        log.info("Position the cube so that U is on top, F is in the front, etc...to make debugging easier")
+        self.rotate_cube(-1, 1)
+        self.flip()
+        self.flipper_away()
+        self.rotate_cube(1, 1)
 
     def cube_done(self):
         self.flipper_away()
