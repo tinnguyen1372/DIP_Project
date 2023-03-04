@@ -28,12 +28,8 @@ def solve(scan_try):
     mcube.flipper_hold_cube(100)
     mcube.flipper_away(100)
 
-    #Step 1: Scan
-    mcube.scan()
-    scan_result_as_string = str(json.dumps(mcube.colors))
-
     #Step 2: Generate solution
-    result = com.send_to_pc(scan_result_as_string)
+    result = com.send_to_pc("CVSCAN")
 
     #Step 3: Solve
     mcube.flipper_hold_cube(100)

@@ -17,7 +17,6 @@ def convert_keys_to_int(dict_to_convert):
 
     return result
 
-
 # Logging
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(filename)22s %(levelname)8s: %(message)s')
@@ -44,7 +43,7 @@ if args.webcam is None and args.directory is None and args.filename is None:
 if args.debug:
     log.setLevel(logging.DEBUG)
 
-if args.webcam is not None:
+if args.webcam is not None: 
     rvid = RubiksVideo(args.webcam)
     rvid.analyze_webcam()
 
