@@ -46,7 +46,9 @@ def run_tracker():
 
     if args.webcam is not None: 
         rvid = RubiksVideo(args.webcam)
-        rvid.analyze_webcam()
+        dict = rvid.analyze_webcam()
+        return dict
+
 
     elif args.webcam is None: #added this to remove the cmd line argument
         rvid = RubiksVideo(0)

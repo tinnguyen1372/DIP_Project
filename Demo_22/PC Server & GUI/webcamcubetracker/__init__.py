@@ -1679,6 +1679,7 @@ class RubiksVideo(RubiksOpenCV):
                     # with open('./PC Server & GUI/webcam.json', 'w') as fh:
                     #     json.dump(self.total_data, fh, sort_keys=True, indent=4)
                     # os.chmod('/PC Server & GUI/webcam.json', 0o777)
+                    global dict
                     dict = json.dumps(self.total_data, sort_keys=True, indent=4)
                     # from rubikscolorresolver.solver import RubiksColorSolverGeneric
                     # cube = RubiksColorSolverGeneric(3)
@@ -1695,7 +1696,8 @@ class RubiksVideo(RubiksOpenCV):
                     # cv2.putText(self.image, "Video may freeze", (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,0), 1)
                     # for line in solution.splitlines():
                     #     self.solution = line.strip()
-                    return dict
+
+                    break
                     # cmd = ['rubiks-color-resolver.py', '--json', '--filename', '/PC Server & GUI/webcam.json']
                     # log.info(' '.join(cmd))
                     # final_colors = json.loads(dict)
@@ -1755,22 +1757,22 @@ class RubiksVideo(RubiksOpenCV):
                 self.video_reset(False)
                 self.save_colors = False
 
-            if self.solution:
-                slist = self.solution.split()
-                row = 1
+            # if self.solution:
+            #     slist = self.solution.split()
+            #     row = 1
 
-                while slist:
-                    to_display = min(10, len(slist))
-                    cv2.putText(self.image, ' '.join(slist[0:to_display]), (10, 20 * row), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,0), 1)
-                    if to_display == len(slist):
-                        break
-                    else:
-                        slist = slist[to_display:]
-                    row += 1
+            #     while slist:
+            #         to_display = min(10, len(slist))
+            #         cv2.putText(self.image, ' '.join(slist[0:to_display]), (10, 20 * row), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,0), 1)
+            #         if to_display == len(slist):
+            #             break
+            #         else:
+            #             slist = slist[to_display:]
+            #         row += 1
 
-            elif self.size_static is not None:
-                cv2.putText(self.image, "%dx%dx%d" % (self.size_static, self.size_static, self.size_static),
-                            (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255), 1)
+            # elif self.size_static is not None:
+            #     cv2.putText(self.image, "%dx%dx%d" % (self.size_static, self.size_static, self.size_static),
+            #                 (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255), 1)
 
             cv2.imshow("Fig", self.image)
 
@@ -1782,3 +1784,4 @@ class RubiksVideo(RubiksOpenCV):
 
         capture.release()
         cv2.destroyWindow("Fig")
+        return dict
