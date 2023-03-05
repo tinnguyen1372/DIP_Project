@@ -37,7 +37,8 @@ def on_message(client, userdata, msg):
     try:
         cube = RubiksColorSolverGeneric(3)
         if dict == "CVSCAN":
-            cube.enter_scan_data(json.loads(tracker.run_tracker()))
+            scan_results = tracker.run_tracker()
+            cube.enter_scan_data(json.loads(scan_results))
         else:
             cube.enter_scan_data(json.loads(dict))
         cube.crunch_colors()
@@ -59,6 +60,7 @@ def on_message(client, userdata, msg):
     elif dropdown.get() == "Solve to chosen pattern": method = 3
     solution = solver.solve(max_length, time_out, STRING_CUBE, method,  solveToString.get("1.0",'end-1c').strip()) # default is Kociemba
     client.publish("topic/pc_to_ev3", solution)
+    logging.info("Sent solution to EV3")
 
 # ################################## Some global variables and constants ###############################################
 width = 60  # width of a facelet in pixels
@@ -133,6 +135,7 @@ def get_definition_string():
     return s
 
 def cvscan():
+    # opencv = threading.Thread(target=tracker.run_tracker, )
     tracker.run_tracker()
 
 # ###################################### Solve the displayed cube ######################################################
