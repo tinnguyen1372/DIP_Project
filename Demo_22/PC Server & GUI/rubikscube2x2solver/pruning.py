@@ -1,9 +1,9 @@
 # ##################### The pruning table cuts the search tree during the search. ######################################
 # ########################## In this case it it gives the exact distance to the solved state. ##########################
 
-import defs
-import enums
-import moves as mv
+import rubikscube2x2solver.defs as defs
+import rubikscube2x2solver.enums as enums
+import rubikscube2x2solver.moves as mv
 from os import path
 import array as ar
 

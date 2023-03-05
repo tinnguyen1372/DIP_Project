@@ -1,7 +1,7 @@
 # ####### The cube on the coordinate level is described by a 3-tuple of natural numbers in phase 1 and phase 2. ########
 
-import moves as mv
-from defs import N_MOVE
+import rubikscube2x2solver.moves as mv
+from rubikscube2x2solver.defs import N_MOVE
 
 SOLVED = 0  # 0 is index of solved state (except for u_edges coordinate)
 

@@ -1,11 +1,11 @@
 # ###################### The solve function computes all optimal solving maneuvers #####################################
-import face
-import cubie
-import coord
-import enums as en
-import moves as mv
-import pruning as pr
-from defs import N_TWIST
+import rubikscube2x2solver.face as face
+import rubikscube2x2solver.cubie as cubie
+import rubikscube2x2solver.coord as coord
+import rubikscube2x2solver.enums as en
+import rubikscube2x2solver.moves as mv
+import rubikscube2x2solver.pruning as pr
+from rubikscube2x2solver.defs import N_TWIST
 
 solutions = []
 
@@ -56,7 +56,8 @@ def solve(cubestring):
     search(co_cube.cornperm, co_cube.corntwist, [], togo)
 
     s = ''
-    for i in range(len(solutions)):  # use  range(min(len(solutions), 1)) if you want to return only a single solution
+    # for i in range(len(solutions)):  # use  range(min(len(solutions), 1)) if you want to return only a single solution
+    for i in range(min(len(solutions), 1)):
         ps = ''
         for m in solutions[i]:
             ps += m.name + ' '

@@ -1,6 +1,6 @@
  ###################################### some definitions and constants ################################################
 
-from enums import Facelet as Fc, Color as Cl
+from rubikscube2x2solver.enums import Facelet as Fc, Color as Cl
 
 # Map the corner positions to facelet positions.
 cornerFacelet = [[Fc.U4, Fc.R1, Fc.F2], [Fc.U3, Fc.F1, Fc.L2], [Fc.U1, Fc.L1, Fc.B2], [Fc.U2, Fc.B1, Fc.R2],

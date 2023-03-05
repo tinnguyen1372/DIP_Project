@@ -38,7 +38,11 @@ def on_message(client, userdata, msg):
         cube = RubiksColorSolverGeneric(3)
         if dict == "CVSCAN":
             scan_results = tracker.run_tracker()
-            cube.enter_scan_data(json.loads(scan_results))
+            scan_data = json.loads(scan_results)
+            # print("Length of cubestring:{}".format(len(scan_data)))
+            if len(scan_data) == 24:
+                cube = RubiksColorSolverGeneric(2)
+            cube.enter_scan_data(scan_data)
         else:
             cube.enter_scan_data(json.loads(dict))
         cube.crunch_colors()
@@ -136,8 +140,27 @@ def get_definition_string():
 
 def cvscan():
     # opencv = threading.Thread(target=tracker.run_tracker, )
-    tracker.run_tracker()
-
+    try:
+        cube = RubiksColorSolverGeneric(3)
+        scan_results = tracker.run_tracker()
+        scan_data = json.loads(scan_results)
+        # print("Length of cubestring:{}".format(len(scan_data)))
+        if len(scan_data) == 24:
+            cube = RubiksColorSolverGeneric(2)
+        cube.enter_scan_data(scan_data)
+        cube.crunch_colors()
+        output = "".join(cube.cube_for_kociemba_strict())
+        if len(scan_data) == 54:
+            comque.put(output)
+            root.event_generate('<<TimeChanged>>', when='tail')
+        show_text(output + '\n')
+    except Exception as e:
+        print(e)
+        output = e
+    cube = None
+    #   method = 1 # 1 for Two phase Kociemba, 2 for Korf
+    solution = solver.solve(max_length, time_out, output, 1,  None) # default is Kociemba
+    show_text(solution + '\n')
 # ###################################### Solve the displayed cube ######################################################
 def solvex():
     try:
@@ -177,6 +200,8 @@ def visualise(event):
         comque.get()
         return
     temp_cubestring = comque.get()
+    if len(temp_cubestring) == 24:
+        pass
     print("visualising ")
     # print(string_cube)
     print(temp_cubestring)
@@ -239,7 +264,7 @@ def test_mqtt(ip):
     commonClient = mqtt.Client()
     # client = mqtt.Client()
     try:
-        commonClient.connect(ip,1883,60)
+        commonClient.connect(ip,1883,600)
         commonClient.on_connect = on_connect
         commonClient.on_message = on_message
        

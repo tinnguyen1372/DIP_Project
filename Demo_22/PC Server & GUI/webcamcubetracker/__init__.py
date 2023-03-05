@@ -17,7 +17,7 @@ For each png
 - json dump a dictionary that contains the RGB values for each square
 
 """
-import twophase.solver as twophase
+# import twophase.solver as twophase
 from copy import deepcopy
 from itertools import combinations
 from pprint import pformat
@@ -1784,4 +1784,5 @@ class RubiksVideo(RubiksOpenCV):
 
         capture.release()
         cv2.destroyWindow("Fig")
+        # print(dict)
         return dict
