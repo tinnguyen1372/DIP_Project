@@ -1,0 +1,8 @@
+paho-mqtt==1.6.1
+pexpect==4.8.0
+psutil==5.9.4
+ptyprocess==0.7.0
+pywin32==305
+rubikscolorresolver @ git+https://github.com/dwalton76/rubiks-color-resolver.git@c1a7211dd15a82589fc1454f630450ac26e5b44b
+RubikTwoPhase==1.1.1
+wexpect==4.0.0
