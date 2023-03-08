@@ -11,6 +11,7 @@ import twophase.solver as sv
 import twophase
 import queue
 import logging
+import rubikscube2x2solver as two_by_two
 logging.basicConfig(level=logging.INFO,
                         format='%(asctime)s %(levelname)8s: %(message)s',
                     )
@@ -27,6 +28,7 @@ STRING_CUBE = "" # save the scanned rubik (not for visualisation)
 GOAL_STRING = "" # for the solveto method
 METHOD = 1 
 IS_RANDOM = FALSE
+CURRENT_FORMAT = 1
 
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
@@ -73,6 +75,7 @@ colorpick_id = [0 for i in range(6)]
 curcol = None
 t = ("U", "R", "F", "D", "L", "B")
 cols = ("yellow", "green", "red", "white", "blue", "orange")
+rubik_side_text = [0 for i in range(6)]
 
 # ################################################ Diverse functions ###################################################
 
@@ -100,6 +103,7 @@ def show_text_log(txt):
 
 def create_facelet_rects(a):
     """Initialize the facelet grid on the canvas."""
+    global rubik_side_text
     offset = ((1, 0), (2, 1), (1, 1), (1, 2), (0, 1), (3, 1))
     for f in range(6):
         for row in range(3):
@@ -108,7 +112,7 @@ def create_facelet_rects(a):
                 x = 10 + offset[f][0] * 3 * a + col * a
                 facelet_id[f][row][col] = canvas.create_rectangle(x, y, x + a, y + a, fill="grey")
                 if row == 1 and col == 1:
-                    canvas.create_text(x + width // 2, y + width // 2, font=("", 14), text=t[f], state=DISABLED)
+                    rubik_side_text[f] = canvas.create_text(x + width // 2, y + width // 2, font=("", 14), text=t[f], state=DISABLED)
     for f in range(6):
         canvas.itemconfig(facelet_id[f][1][1], fill=cols[f])
 
@@ -124,6 +128,17 @@ def create_colorpick_rects(a):
         canvas.itemconfig(colorpick_id[0], width=4)
         curcol = cols[0]
 
+def create_facelet_rects_2x2(a):
+    """Initializes the facelet grid on the canvas"""
+    offset = ((1, 0), (2, 1), (1, 1), (1, 2), (0, 1), (3, 1))
+    for f in range(6):
+        for row in range(2):
+            y = 20 + offset[f][1] * 2 * a + row * a + 80
+            for col in range(2):
+                x = 20 + offset[f][0] * 2 * a + col * a + 80
+                facelet_id[f][row][col] = canvas.create_rectangle(x, y, x + a, y + a, fill=cols[f])
+                if row == 1 and col == 1:
+                    rubik_side_text[f] = canvas.create_text(x, y, font=("", 14), text=t[f], state=DISABLED)
 
 def get_definition_string():
     # TODO: convert from cubetring to color
@@ -194,30 +209,92 @@ def empty():
                     canvas.itemconfig(facelet_id[f][row][col], fill="grey")
     show_text_log("Cube visualisation emptied successfully!")
 
+# def visualise(event):
+#     # global string_cube
+#     if METHOD == 3:
+#         comque.get()
+#         return
+#     temp_cubestring = comque.get()
+#     if len(temp_cubestring) == 24:
+#         pass
+#     print("visualising ")
+#     # print(string_cube)
+#     print(temp_cubestring)
+#     fc = twophase.face.FaceCube()
+#     fc.from_string(temp_cubestring)
+#     # fc is already modified to match the rubik's face of the app
+#     idx = 0
+#     for f in range(6):
+#         # center_cubie = cols[f][1][1]
+#         for row in range(3):
+#             for col in range(3):
+#                 # print(cols[fc.f[idx]]) # red, yellow etc.
+#                 # print(type(cols[fc.f[idx]])) # string
+#                 canvas.itemconfig(facelet_id[f][row][col], fill=cols[fc.f[idx]])
+#                 idx += 1
 def visualise(event):
     # global string_cube
-    if METHOD == 3:
-        comque.get()
-        return
+    global CURRENT_FORMAT
     temp_cubestring = comque.get()
-    if len(temp_cubestring) == 24:
-        pass
-    print("visualising ")
-    # print(string_cube)
-    print(temp_cubestring)
-    fc = twophase.face.FaceCube()
-    fc.from_string(temp_cubestring)
-    # fc is already modified to match the rubik's face of the app
-    idx = 0
+    if len(temp_cubestring) == 54:
+        if METHOD == 3:
+            return
+        if CURRENT_FORMAT != 1:
+            remove_facelets_2x2()
+            add_facelets_cube()
+            CURRENT_FORMAT = 1
+        print("visualising ")
+        # print(string_cube)
+        print(temp_cubestring)
+        fc = twophase.face.FaceCube()
+        fc.from_string(temp_cubestring)
+        # fc is already modified to match the rubik's face of the app
+        idx = 0
+        for f in range(6):
+            for row in range(3):
+                for col in range(3):
+                    canvas.itemconfig(facelet_id[f][row][col], fill=cols[fc.f[idx]])
+                    idx += 1
+
+    else:
+        if CURRENT_FORMAT != 2:
+            remove_facelets_cube()
+            add_facelets_2x2()
+            CURRENT_FORMAT = 2
+        print("visualising 2x2")
+        print(temp_cubestring)
+        fc = two_by_two.face.FaceCube()
+        fc.from_string(temp_cubestring)
+
+        idx = 0
+        for f in range(6):
+            for row in range(2):
+                for col in range(2):
+                    canvas.itemconfig(facelet_id[f][row][col], fill=cols[fc.f[idx]] )
+                    idx += 1
+
+def remove_facelets_cube():
     for f in range(6):
-        # center_cubie = cols[f][1][1]
         for row in range(3):
             for col in range(3):
-                # print(cols[fc.f[idx]]) # red, yellow etc.
-                # print(type(cols[fc.f[idx]])) # string
-                canvas.itemconfig(facelet_id[f][row][col], fill=cols[fc.f[idx]])
-                idx += 1
-    
+                canvas.delete(facelet_id[f][row][col])
+    for f in range(6):
+        canvas.delete(rubik_side_text[f])
+                
+                
+def add_facelets_cube():
+    create_facelet_rects(width)
+
+def add_facelets_2x2():
+    create_facelet_rects_2x2(width)
+
+def remove_facelets_2x2():
+    for f in range(6):
+        for row in range(3):
+            for col in range(3):
+                canvas.delete(facelet_id[f][row][col])
+    for f in range(6):
+        canvas.delete(rubik_side_text[f])
 
 def random():
     """Generate a random cube and set the corresponding facelet colors."""
@@ -385,7 +462,7 @@ logText = Text(height=5, width=23, font=("Arial", 10), wrap=WORD)
 logText_window = canvas.create_window(-380+6.5* width, 30+ 6.5 * width, anchor=NW, window=logText)
 
 canvas.bind("<Button-1>", click)
-create_facelet_rects(width)
+create_facelet_rects_2x2(width)
 clean()
 
 root.bind('<<TimeChanged>>', visualise)

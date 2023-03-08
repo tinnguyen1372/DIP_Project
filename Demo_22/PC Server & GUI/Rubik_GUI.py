@@ -10,6 +10,7 @@ import twophase.solver as sv
 import twophase
 import queue
 import logging
+import rubikscube2x2solver as two_by_two
 logging.basicConfig(level=logging.INFO,
                         format='%(asctime)s %(levelname)8s: %(message)s',
                     )
@@ -31,6 +32,8 @@ STRING_CUBE = "" # save the scanned rubik (not for visualisation)
 GOAL_STRING = "" # for the solveto method
 METHOD = 1 
 IS_RANDOM = FALSE
+CURRENT_FORMAT = 1 # 1 is 3x3, 2 is 2x2
+
 
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
@@ -107,6 +110,7 @@ colorpick_id = [0 for i in range(6)]
 curcol = None
 t = ("U", "R", "F", "D", "L", "B")
 cols = ("yellow", "green", "red", "white", "blue", "orange")
+rubik_side_text = [0 for i in range(6)]
 ########################################################################################################################
 
 # ################################################ Diverse functions ###################################################
@@ -135,6 +139,7 @@ def show_text_log(txt):
 
 def create_facelet_rects(a):
     """Initialize the facelet grid on the canvas."""
+    global rubik_side_text
     offset = ((1, 0), (2, 1), (1, 1), (1, 2), (0, 1), (3, 1))
     for f in range(6):
         for row in range(3):
@@ -143,10 +148,32 @@ def create_facelet_rects(a):
                 x = 10 + offset[f][0] * 3 * a + col * a
                 facelet_id[f][row][col] = canvas.create_rectangle(x, y, x + a, y + a, fill="grey")
                 if row == 1 and col == 1:
-                    canvas.create_text(x + width // 2, y + width // 2, font=("", 14), text=t[f], state=DISABLED)
+                    rubik_side_text[f] = canvas.create_text(x + width // 2, y + width // 2, font=("", 14), text=t[f], state=DISABLED)
     for f in range(6):
         canvas.itemconfig(facelet_id[f][1][1], fill=cols[f])
 
+def remove_facelets_cube():
+    for f in range(6):
+        for row in range(3):
+            for col in range(3):
+                canvas.delete(facelet_id[f][row][col])
+    for f in range(6):
+        canvas.delete(rubik_side_text[f])
+                
+                
+def add_facelets_cube():
+    create_facelet_rects(width)
+
+def add_facelets_2x2():
+    create_facelet_rects_2x2(width)
+
+def remove_facelets_2x2():
+    for f in range(6):
+        for row in range(3):
+            for col in range(3):
+                canvas.delete(facelet_id[f][row][col])
+    for f in range(6):
+        canvas.delete(rubik_side_text[f])
 
 def create_colorpick_rects(a):
     """Initialize the "paintbox" on the canvas."""
@@ -187,37 +214,6 @@ def solvex():
         return
     show_text(defstr + '\n')
     show_text(sv.solve(defstr,19,2) + '\n')
-
-# def advanced_solve():
-#     logging.info("Connecting to mqtt_com...")
-#     ip = txt_ip.get("1.0",'end-1c')
-#     ssh_client_button()
-#     # ev3 = SSH_Client(ip = ip)
-#     # ev3.spawn_ssh(dir = directory, filename = "function_test")
-#     global commonClient
-    
-#     # global commonClient
-#     # client = mqtt.Client()
-#     try:
-#         commonClient.connect(ip,1883,60)
-#         commonClient.on_connect = on_connect
-#         commonClient.on_message = on_message
-#         commonClient.loop_forever()
-#     # try:
-#     #     commonClient.subscribe("topic/ev3_to_pc")
-#     #     cube.enter_scan_data(json.loads(dict))
-#     #     cube.crunch_colors()
-#     #     output = "".join(cube.cube_for_kociemba_strict())
-#     #     global STRING_CUBE
-#     #     STRING_CUBE = output
-        
-#     except Exception as e:
-#         logging.info("Scan-only operation error")
-#     # global GOAL_STRING
-#     # GOAL_STRING = solveToString.get("1.0",'end-1c')
-#     # print("Will solve to {}".format(GOAL_STRING))
-#     # solution = solver.solve(max_length, time_out, STRING_CUBE, METHOD, GOAL_STRING)
-#     # commonClient.publish("topic/pc_to_ev3", solution)
     
 # ########################################################################################################################
 
@@ -246,24 +242,45 @@ def empty():
 
 def visualise(event):
     # global string_cube
-    if METHOD == 3:
-        return
     temp_cubestring = comque.get()
-    print("visualising ")
-    # print(string_cube)
-    print(temp_cubestring)
-    fc = twophase.face.FaceCube()
-    fc.from_string(temp_cubestring)
-    # fc is already modified to match the rubik's face of the app
-    idx = 0
-    for f in range(6):
-        # center_cubie = cols[f][1][1]
-        for row in range(3):
-            for col in range(3):
-                # print(cols[fc.f[idx]]) # red, yellow etc.
-                # print(type(cols[fc.f[idx]])) # string
-                canvas.itemconfig(facelet_id[f][row][col], fill=cols[fc.f[idx]])
-                idx += 1
+    if len(temp_cubestring) == 54:
+        if METHOD == 3:
+            return
+        if CURRENT_FORMAT != 1:
+            remove_facelets_2x2()
+            add_facelets_cube()
+            CURRENT_FORMAT = 1
+        print("visualising ")
+        # print(string_cube)
+        print(temp_cubestring)
+        fc = twophase.face.FaceCube()
+        fc.from_string(temp_cubestring)
+        # fc is already modified to match the rubik's face of the app
+        idx = 0
+        for f in range(6):
+            for row in range(3):
+                for col in range(3):
+                    canvas.itemconfig(facelet_id[f][row][col], fill=cols[fc.f[idx]])
+                    idx += 1
+
+    else:
+        if CURRENT_FORMAT != 2:
+            remove_facelets_cube()
+            add_facelets_2x2()
+            CURRENT_FORMAT = 2
+        print("visualising 2x2")
+        print(temp_cubestring)
+        fc = two_by_two.face.FaceCube()
+        fc.from_string(temp_cubestring)
+
+        idx = 0
+        for f in range(6):
+            for row in range(2):
+                for col in range(2):
+                    canvas.itemconfig(facelet_id[f][row][col], fill=cols[fc.f[idx]] )
+                    idx += 1
+
+
     
 
 def random():
@@ -361,6 +378,70 @@ def ssh_client_button():
     threading.Thread(target= ssh_client_connect).start()
     show_text_log("Started scanning process ...")
     
+def frontend_initialise():
+    # canvas = Canvas(root, width=12 * width + 20, height=9 * width + 20)
+    # canvas.pack()
+
+    hp = Label(text='Remote SSH connection', font=("Arial", 9, "bold"))
+    hp_window = canvas.create_window(10 + 0 * width, -25+ 0.6 * width, anchor=NW, window=hp)
+    hp = Label(text='EV3 IP address', font=("", 7))
+    hp_window1 = canvas.create_window(10 + 0 * width, -25+ 0.9 * width, anchor=NW, window=hp)
+    txt_ip = Text(height=1, width=20)
+    txt_ip.insert(INSERT, DEFAULT_IP)
+    txt_ip_window = canvas.create_window(10 + 0 * width, -25+ 1.2 * width, anchor=NW, window=txt_ip)
+    hp = Label(text='EV3 directory', font=("", 7))
+    hp_window2 = canvas.create_window(10 + 0 * width, -25+ 1.5 * width, anchor=NW, window=hp)
+    txt_directory = Text(height=1, width=20)
+    txt_directory_window = canvas.create_window(10 + 0 * width,-25+ 1.8 * width, anchor=NW, window=txt_directory)
+    hp = Label(text='EV3 file name', font=("", 7))
+    hp_window3 = canvas.create_window(10 + 0 * width, -25+ 2.1 * width, anchor=NW, window=hp)
+    txt_directory.insert(INSERT, DEFAULT_DIRECTORY)
+    txt_file = Text(height=1, width=20)
+    txt_file_window = canvas.create_window(10 + 0 * width, -25+ 2.4 * width, anchor=NW, window=txt_file)
+    txt_file.insert(INSERT, DEFAULT_FILE)
+    bsolve = Button(root,text="Run File", height=2, width=10, relief=RAISED, command=ssh_client_button)
+    bsolve_window = canvas.create_window(10 + 1.5 * width, -25 + 2.8 * width, anchor=NW, window=bsolve)
+    bsolve = Button(root,text="Connect", height=2, width=10, relief=RAISED, command=mqtt_connect_button)
+    bsolve_window = canvas.create_window(10 +0* width, -25 + 2.8 * width, anchor=NW, window=bsolve)
+
+    bsolve = Button(root,text="Solve", height=2, width=10, relief=RAISED, command=remove_facelets_cube) #solvex
+    bsolve_window = canvas.create_window(10 + 10.5 * width, 10 + 6.5 * width, anchor=NW, window=bsolve)
+    bclean = Button(root,text="Clean", height=1, width=10, relief=RAISED, command=add_facelets_cube) #clean
+    bclean_window = canvas.create_window(10 + 10.5 * width, 10 + 7.5 * width, anchor=NW, window=bclean)
+    bempty = Button(root,text="Empty", height=1, width=10, relief=RAISED, command=empty)
+    bempty_window = canvas.create_window(10 + 10.5 * width, 10 + 8 * width, anchor=NW, window=bempty)
+    brandom = Button(root,text="Random", height=1, width=10, relief=RAISED, command=random)
+    brandom_window = canvas.create_window(10 + 10.5 * width, 10 + 8.5 * width, anchor=NW, window=brandom)
+    display = Text(root,height=10, width=42)
+    text_window = canvas.create_window(55 + 5.5 * width, -15 + 0.5 * width, anchor=NW, window=display)
+    label_algo = Label(text='Select advanced algorithm/function:', font=("Arial", 9, "bold"))
+    hp_window = canvas.create_window(50 + 5.5 * width, 10+6.5*width, anchor=NW, window=label_algo)
+    dropdown = StringVar(root)
+    dropdown.set("Kociemba's algorithm") # default value
+    option_dropdown = OptionMenu(
+        root, 
+        dropdown, "Kociemba's algorithm", "Korf's algorithm", "Solve to chosen pattern",
+        command = option_changed)
+    option_dropdown.pack()
+    dropdown_window = canvas.create_window(50+5.5*width, 30+6.5*width, anchor = NW, window = option_dropdown)
+
+
+
+
+    solveToString = Text(height=3, width=25)
+    solveToString_window = canvas.create_window(50+5.5* width, 70+ 6.5 * width, anchor=NW, window=solveToString)
+    solveToString.insert(INSERT, GOAL_STRING)
+
+    label_logtext = Label(text='Log Text:', font=("Arial", 9, "bold"))
+    hp_window2 = canvas.create_window(-380+ 6.5 * width, 10+6.5*width, anchor=NW, window=label_logtext)
+    logText = Text(height=5, width=23, font=("Arial", 10), wrap=WORD)
+    logText_window = canvas.create_window(-380+6.5* width, 30+ 6.5 * width, anchor=NW, window=logText)
+
+
+    canvas.bind("<Button-1>", click)
+
+    # create_facelet_rects(width)
+    # clean()
 
 root = Tk()
 root.wm_title("Solver Client")
@@ -390,13 +471,13 @@ bsolve_window = canvas.create_window(10 + 1.5 * width, -25 + 2.8 * width, anchor
 bsolve = Button(root,text="Connect", height=2, width=10, relief=RAISED, command=mqtt_connect_button)
 bsolve_window = canvas.create_window(10 +0* width, -25 + 2.8 * width, anchor=NW, window=bsolve)
 
-bsolve = Button(root,text="Solve", height=2, width=10, relief=RAISED, command=solvex)
-bsolve_window = canvas.create_window(10 + 10.5 * width, 10 + 6.5 * width, anchor=NW, window=bsolve)
-bclean = Button(root,text="Clean", height=1, width=10, relief=RAISED, command=clean)
+bsolve = Button(root,text="Solve", height=2, width=10, relief=RAISED, command=solvex) # solvex
+bsolve_window = canvas.create_window(10 + 10.5 * width, 10 + 6.5 * width, anchor=NW, window=bsolve) 
+bclean = Button(root,text="Clean", height=1, width=10, relief=RAISED, command=clean) # clean
 bclean_window = canvas.create_window(10 + 10.5 * width, 10 + 7.5 * width, anchor=NW, window=bclean)
-bempty = Button(root,text="Empty", height=1, width=10, relief=RAISED, command=empty)
+bempty = Button(root,text="Empty", height=1, width=10, relief=RAISED, command=empty) # empty
 bempty_window = canvas.create_window(10 + 10.5 * width, 10 + 8 * width, anchor=NW, window=bempty)
-brandom = Button(root,text="Random", height=1, width=10, relief=RAISED, command=random)
+brandom = Button(root,text="Random", height=1, width=10, relief=RAISED, command=random) # random
 brandom_window = canvas.create_window(10 + 10.5 * width, 10 + 8.5 * width, anchor=NW, window=brandom)
 display = Text(root,height=10, width=42)
 text_window = canvas.create_window(55 + 5.5 * width, -15 + 0.5 * width, anchor=NW, window=display)
@@ -421,6 +502,30 @@ def option_changed(self, *args):
     elif temp_res == "Solve to chosen pattern":
         METHOD = 3
         IS_RANDOM = True
+
+
+def create_facelet_rects_2x2(a):
+    """Initializes the facelet grid on the canvas"""
+    offset = ((1, 0), (2, 1), (1, 1), (1, 2), (0, 1), (3, 1))
+    for f in range(6):
+        for row in range(2):
+            y = 20 + offset[f][1] * 2 * a + row * a
+            for col in range(2):
+                x = 20 + offset[f][0] * 2 * a + col * a
+                facelet_id[f][row][col] = canvas.create_rectangle(x, y, x + a, y + a, fill=cols[f])
+                if row == 1 and col == 1:
+                    rubik_side_text[f] = canvas.create_text(x, y, font=("", 14), text=t[f], state=DISABLED)
+
+def create_colorpick_rects_2x2(a):
+    """Initializes the "paintbox" on the canvas"""
+    global curcol
+    global cols
+    for i in range(6):
+        x = (i % 3)*(a+5) + 5*a
+        y = (i // 3)*(a+5) + 5*a
+        colorpick_id[i] = canvas.create_rectangle(x, y, x + a, y + a, fill=cols[i])
+        canvas.itemconfig(colorpick_id[0], width=4)
+        curcol = cols[0]
 
 label_algo = Label(text='Select advanced algorithm/function:', font=("Arial", 9, "bold"))
 hp_window = canvas.create_window(50 + 5.5 * width, 10+6.5*width, anchor=NW, window=label_algo)
@@ -447,12 +552,11 @@ logText_window = canvas.create_window(-380+6.5* width, 30+ 6.5 * width, anchor=N
 
 
 canvas.bind("<Button-1>", click)
+
 create_facelet_rects(width)
 clean()
 # create_colorpick_rects(width)
 
 root.bind('<<TimeChanged>>', visualise)
-
-
 
 root.mainloop()
