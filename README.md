@@ -1,37 +1,58 @@
 # EE3080 DIP AY2022/2023
-# MINDCUB3R Project Using ev3dev2
+# MINDCUBER Project Using ev3dev2
 
-## Disclaimer
-- We refer to the original MINDCUB3R code at https://github.com/ev3dev/ev3dev-lang-python-demo/blob/stretch/robots/MINDCUB3R/mindcuber.py
-- Some modifications to the script are changing InfraredSensor to UltrasonicSensor, changing the UltrasonicSensor detection of the cube, and calibrating the rotation and speed for each motors and color sensor. 
+## References
+- The original MINDCUB3R code can be found at https://github.com/ev3dev/ev3dev-lang-python-demo/blob/stretch/robots/MINDCUB3R/mindcuber.py.
+- The twophase solver and GUI for 3x3 Cube can be found at https://github.com/hkociemba/RubiksCube-TwophaseSolver.
+- The Optimal Solver can be found at https://github.com/hkociemba/RubiksCube-OptimalSolver.
+- The solver and GUI for 2x2 Cube can be found at https://github.com/hkociemba/Rubiks2x2x2-OptimalSolver.
+- The rubikscolorresolver from Dwalton can be found at https://github.com/dwalton76/rubiks-color-resolver.
+- The rubikscolortracker from Dwalton for OpenCV features can be found at https://github.com/dwalton76/rubiks-cube-tracker.
 
 ## Prerequisite
-- Follow the steps as guided by https://github.com/ev3dev/ev3dev-lang-python-demo/blob/stretch/robots/MINDCUB3R/mindcuber.py 
-- Crucial libraries needed are `kociemba`, a library used to call the pruning algorithm for shortest path to solving rubik cube from its input color matrix. Another library is `rubikscolorresolver` which analyzes the RGB input values to categorize into 6 color outputs.
-- You need to be adept in Linux usage to instal the neccessary libraries stated. `pip3` for this Debian is very slow and be careful when you use `sudo` for your apt-get.
-- EV3 Brick runs Debian Linux OS on Raspberry Pi. A secure-server shell (SSH) can be establish from your laptop terminal to connect to the EV3 brick "computer".
-- To SSH into EV3 brick, type in your terminal:
-```.bash
-ssh robot@ev3dev.local
-```
-- The default password (when prompted) is `maker`. Your robot needs to be connected to your laptop via USB cable.
-- The interface when you are inside the robot should look like this:
-- ![brick root dir](./img/homedir.png)
-- You can check out the Linux command lines over here: https://cheatography.com/davechild/cheat-sheets/linux-command-line/. Basic commands are `cd` to go to your desired directory, `ls` to list files in current directory, and `python3 [file name]` to run a python file.
-- In order to edit codes on Linux terminal, I use vim with the command `vim [file name]`. Check out vim shortcuts here: https://vim.rtorr.com/
-- Other ways to connect to the robot includes installing micropython and use `pybricks` library. The documentations for pybricks is here https://docs.pybricks.com/en/latest/. Check out the `pybricks-draft.py` file to see my demo code, with the output looking like below! Still I prefer to use SSH with ev3dev environment hehe.
-- ![pybrick output](./img/pybrickrun.png)
+***Unfortunately, this project is only supported by the Windows OS.***
+- This project is run by changing the approach from running all the solver algorithms inside the EV3, to:
+    - Using paho-MQTT for data communication.
+    - Spawning an SSH connection to EV3 by **wexpect (Windows version of pexpect)** to remotely control EV3 to run files inside.
+- Documentation for paho-MQTT can be found at https://www.eclipse.org/paho/index.php?page=clients/python/docs/index.php.
+- Documentation for wexpect can be found at https://wexpect.readthedocs.io/en/latest/.
+> If you want to run it on Ubuntu OS, you should **make changes to the SSH_Client.py file** to use the pexpect library.
+- Documentation for pexpect can be found at https://pexpect.readthedocs.io/en/latest/.
 
-## Run the code
-- Git clone this repo.
-- Ensure you already run all the neccessary installations in the prerequisite part.
-- Run in the SSH terminal:
-```.bash
-./3x3cube.py
-```
-- The solver script takes quite a while to run. Be patient! While running, your terminal will print out which step it is on like below:
-- ![ev3dev2 running](./img/ev3dev2run.png)
+## Overview:
+- Regarding solving, we provide 3 modes of solving:
+    - Solving the cube by Twophase solver.
+    - Solving the cube by Optimal Solver.
+    - Solving to specific patterns using cubestring (Inverse Solving).
+    > Here is a comparison between the two algorithms:
+    ![Algo_Comparison](/img/Algo_Comparison.png "Comparison")
+- Regarding scanning, we provide 2 modes of scanning:
+    - Traditional scanning by Ultrasonic Sensor.
+    - Scanning by webcam using OpenCV.
 
+## How to install
+- Clone this repository.
+- Preparation on EV3:
+    - Create a new project on EV3 and then migrate the directory named "wecuber" into the EV3.
+    - Make sure the sensors have been connected correctly.
+    - Prepare the addition for flipper 2x2.
+    - Spawn a Bluetooth connection to PC.
+- Preparation on PC:
+    - Install all the dependencies:
+        ```
+        pip install -r requirements.txt
+        ```
+    - Check the installed dependencies:
+        ```
+        pip freeze
+        ```
+    - Have your PC installed OpenSSH in Settings.
+    
+- Run the code:
+    - After preparation, simply run the file ****
+        ```
+        python3 *filename*
+        ```
 ## Miscellaneous
 - The code for 2x2 cube is still under development and there is no stable version yet.
 - So far, these modifications need to be done for 2x2:

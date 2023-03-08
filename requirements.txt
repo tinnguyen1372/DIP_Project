@@ -6,3 +6,4 @@ pywin32==305
 rubikscolorresolver @ git+https://github.com/dwalton76/rubiks-color-resolver.git@c1a7211dd15a82589fc1454f630450ac26e5b44b
 RubikTwoPhase==1.1.1
 wexpect==4.0.0
+opencv-python==4.7.0.72
