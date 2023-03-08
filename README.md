@@ -10,9 +10,9 @@
 - The rubikscolortracker from Dwalton for OpenCV features can be found at https://github.com/dwalton76/rubiks-cube-tracker.
 
 ## Prerequisite
+***This project is only supported by the Windows OS.***
 - Follow the instruction here: https://www.ev3dev.org/docs/getting-started/ in order to install ev3dev for the EV3 brick. ev3dev is a Debian Linux OS that runs on the LEGO® MINDSTORMS EV3
 - Install the LEGO® MINDSTORMS® EV3 MicroPython extension on VS Code
-***This project is only supported by the Windows OS.***
 - This project is run by changing the approach from running all the solver algorithms inside the EV3, to:
     - Using paho-MQTT for data communication.
     - Spawning an SSH connection to EV3 by **wexpect (Windows version of pexpect)** to remotely control EV3 to run files inside.
