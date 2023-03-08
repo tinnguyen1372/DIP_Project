@@ -56,7 +56,7 @@
         python3 *filename*
         ```
 ## 2x2x2 Solving
-- These modifications has been done for 2x2:
+- These modifications have been done for 2x2:
     + Platform holder: Designed and 3D printed a smaller platform adapter to hold the smaller 2x2 cube.
     + Flipper arm: The flipping motion worked just fine. Minor additional parts have been added to block the upper layer from moving when doing rotate_cube_blocked actions
     + Color sensor motor: not used, instead the cube is scanned using computer vision
