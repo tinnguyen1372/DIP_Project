@@ -10,7 +10,9 @@
 - The rubikscolortracker from Dwalton for OpenCV features can be found at https://github.com/dwalton76/rubiks-cube-tracker.
 
 ## Prerequisite
-***Unfortunately, this project is only supported by the Windows OS.***
+- Follow the instruction here: https://www.ev3dev.org/docs/getting-started/ in order to install ev3dev for the EV3 brick. ev3dev is a Debian Linux OS that runs on the LEGO® MINDSTORMS EV3
+- Install the LEGO® MINDSTORMS® EV3 MicroPython extension on VS Code
+***This project is only supported by the Windows OS.***
 - This project is run by changing the approach from running all the solver algorithms inside the EV3, to:
     - Using paho-MQTT for data communication.
     - Spawning an SSH connection to EV3 by **wexpect (Windows version of pexpect)** to remotely control EV3 to run files inside.
@@ -23,7 +25,7 @@
 - Regarding solving, we provide 3 modes of solving:
     - Solving the cube by Twophase solver.
     - Solving the cube by Optimal Solver.
-    - Solving to specific patterns using cubestring (Inverse Solving).
+    - Solving to specific patterns.
     > Here is a comparison between the two algorithms:
     ![Algo_Comparison](/img/Algo_Comparison.png "Comparison")
 - Regarding scanning, we provide 2 modes of scanning:
@@ -33,9 +35,9 @@
 ## How to install
 - Clone this repository.
 - Preparation on EV3:
-    - Create a new project on EV3 and then migrate the directory named "wecuber" into the EV3.
-    - Make sure the sensors have been connected correctly.
-    - Prepare the addition for flipper 2x2.
+    - Create a new project on EV3 and then migrate the directory named "wecuber" into the EV3 (either via SSH or VS Code).
+    - Make sure the sensors and motors have been connected correctly.
+    - Prepare the additional parts for flipper 2x2.
     - Spawn a Bluetooth connection to PC.
 - Preparation on PC:
     - Install all the dependencies:
@@ -53,12 +55,10 @@
         ```
         python3 *filename*
         ```
-## Miscellaneous
-- The code for 2x2 cube is still under development and there is no stable version yet.
-- So far, these modifications need to be done for 2x2:
-    + Change scan_cube order (already did)
-    Platform holder: no change needed. The shape is still cubic, so the topology is the same with 45 and 90 degrees movements. The sizing for the 2x2 cube is smaller, so the Hardware subteam helped out with designing a smaller platform with the same gear ratio to hold the smaller 2x2 cube.
-    + Flipper arm: since my code instructs the flipper arm to “go all the way until stopped by an object”, it will still be able to touch the smaller 2x2 cube. Hardware team also helped to insert a horizontal bar at the flipper tip to hold the smaller 2x2 cube.
-    + Color sensor motor: changes need to be made as now the code does not read “center tile, corner tile and edge tile” similar to the 3x3 cube anymore. The 2x2 rubik's cube now only has 4 corner tiles without any center nor edge tile. The matrix used to save the tile color values is also different in shape compared to the 3×3 cube.
-    + Color sensor: no change, as there are still 6 same colors belonging to 6 faces of the cube.
-    + Ultrasonic sensor: increase the distance between the sensor and the cube to 8cm, as the 2x2 cube is smaller so the distance should be larger.
+## 2x2x2 Solving
+- These modifications has been done for 2x2:
+    + Platform holder: Designed and 3D printed a smaller platform adapter to hold the smaller 2x2 cube.
+    + Flipper arm: The flipping motion worked just fine. Minor additional parts have been added to block the upper layer from moving when doing rotate_cube_blocked actions
+    + Color sensor motor: not used, instead the cube is scanned using computer vision
+    + Ultrasonic sensor: no change
+    + Solving algorithm: Used the Optimal 2x2 solver algorithm to solve the cube.
