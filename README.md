@@ -10,7 +10,7 @@
 -   The rubikscolortracker from Dwalton for OpenCV features at https://github.com/dwalton76/rubiks-cube-tracker
 
 ## Prerequisite
->   Unfortunately, this project only support the Windows OS
+***Unfortunately, this project only supports the Windows OS***
 -   This project is running by instead of running all the solver algorithm inside the EV3, we change to:
     -   Using paho-MQTT for data communication
     -   Spawning SSH connection to EV3 by **wexpect (Windows version of pexpect)** for remotely controlling EV3 to run file inside
