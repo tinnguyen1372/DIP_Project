@@ -4,18 +4,30 @@
 ## References
 -   The original MINDCUB3R code at https://github.com/ev3dev/ev3dev-lang-python-demo/blob/stretch/robots/MINDCUB3R/mindcuber.py
 -   The twophase solver and GUI for 3x3 Cube at https://github.com/hkociemba/RubiksCube-TwophaseSolver
+-   The Optimal Solver at https://github.com/hkociemba/RubiksCube-OptimalSolver
 -   The solver and GUI for 2x2 Cube at https://github.com/hkociemba/Rubiks2x2x2-OptimalSolver
 -   The rubikscolorresolver from Dwalton at https://github.com/dwalton76/rubiks-color-resolver
--   The rubikscolortracker for OpenCV features at https://github.com/dwalton76/rubiks-cube-tracker
+-   The rubikscolortracker from Dwalton for OpenCV features at https://github.com/dwalton76/rubiks-cube-tracker
 
 ## Prerequisite
+>   Unfortunately, this project only support the Windows OS
 -   This project is running by instead of running all the solver algorithm inside the EV3, we change to:
     -   Using paho-MQTT for data communication
     -   Spawning SSH connection to EV3 by **wexpect (Windows version of pexpect)** for remotely controlling EV3 to run file inside
--   wexpect is the library to spawn command on Windows terminal, using to spawn SSH connection to EV3. Unfortunately, this project only support the Windows OS, if you want to make it run on Ubuntu OS, should **make change on the SSH_Client.py file** to the pexpect library. 
+>   wexpect is the library to spawn command on Windows terminal, using to spawn SSH connection to EV3.
 -   Documentation of paho-MQTT: https://www.eclipse.org/paho/index.php?page=clients/python/docs/index.php
 -   Documentation of wexpect: https://wexpect.readthedocs.io/en/latest/
+>   If you want to make it run on Ubuntu OS, should **make change on the SSH_Client.py file** to the pexpect library. 
 -   Documentation of pexpect: https://pexpect.readthedocs.io/en/latest/
+## Overview:
+-   Regarding Solving, we provide 3 mode of solving:
+    -   *Solving cube by Twophase solver*
+    -   *Solving cube by Optimal Solver*
+    -   *Solving to specific patterns using cubestring (Inverse Solving)*
+    >   Here is the comparison between 2 algorithms: 
+-   Regarding Scanning, we provide 2 mode of scanning:
+    -   *Traditional scanning by Ultrasonic Sensor*
+    -   *Scanning by webcam using OpenCV*
 
 ## How to install
 -   Git clone this repo
