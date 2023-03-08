@@ -24,8 +24,9 @@
     -   *Solving cube by Twophase solver*
     -   *Solving cube by Optimal Solver*
     -   *Solving to specific patterns using cubestring (Inverse Solving)*
-    Here is the comparison between 2 algorithms: <br>
-        ![Algo_Comparison](/img/Algo_Comparison.png "Comparison")
+    <br>
+    Here is the comparison between 2 algorithms:
+    ![Algo_Comparison](/img/Algo_Comparison.png "Comparison")
 -   Regarding Scanning, we provide 2 mode of scanning:
     -   *Traditional scanning by Ultrasonic Sensor*
     -   *Scanning by webcam using OpenCV*
