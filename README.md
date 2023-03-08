@@ -14,7 +14,6 @@
 -   This project is running by instead of running all the solver algorithm inside the EV3, we change to:
     -   Using paho-MQTT for data communication
     -   Spawning SSH connection to EV3 by **wexpect (Windows version of pexpect)** for remotely controlling EV3 to run file inside
->   wexpect is the library to spawn command on Windows terminal, using to spawn SSH connection to EV3.
 -   Documentation of paho-MQTT: https://www.eclipse.org/paho/index.php?page=clients/python/docs/index.php
 -   Documentation of wexpect: https://wexpect.readthedocs.io/en/latest/
 >   If you want to make it run on Ubuntu OS, should **make change on the SSH_Client.py file** to the pexpect library. 
