@@ -462,7 +462,7 @@ logText = Text(height=5, width=23, font=("Arial", 10), wrap=WORD)
 logText_window = canvas.create_window(-380+6.5* width, 30+ 6.5 * width, anchor=NW, window=logText)
 
 canvas.bind("<Button-1>", click)
-create_facelet_rects_2x2(width)
+create_facelet_rects(width)
 clean()
 
 root.bind('<<TimeChanged>>', visualise)
