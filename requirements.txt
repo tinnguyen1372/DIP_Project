@@ -7,4 +7,3 @@ rubikscolorresolver @ git+https://github.com/dwalton76/rubiks-color-resolver.git
 RubikTwoPhase==1.1.1
 wexpect==4.0.0
 opencv-python==4.7.0.72
-numpy==1.24.2
