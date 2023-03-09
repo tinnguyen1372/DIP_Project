@@ -29,7 +29,7 @@
     > Here is a comparison between the two algorithms:
     ![Algo_Comparison](/img/Algo_Comparison.png "Comparison")
 - Regarding scanning, we provide 2 modes of scanning:
-    - Traditional scanning by Ultrasonic Sensor.
+    - Traditional scanning by Color Sensor.
     - Scanning by webcam using OpenCV.
 
 ## How to install
