@@ -158,8 +158,8 @@ class MindCuber(object):
         self.rotate_cube_blocked(1, 2)
 
     def rotate_cube_blocked_3(self):
-        # self.rotate_cube_blocked(-1, 1)
-        self.rotate_cube_blocked(1, 3)
+        self.rotate_cube_blocked(-1, 1)
+        # self.rotate_cube_blocked(1, 3)
 
     def flipper_hold_cube(self, speed=300):
         current_position = self.flipper.position

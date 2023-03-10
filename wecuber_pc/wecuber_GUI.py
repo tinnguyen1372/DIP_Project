@@ -21,13 +21,12 @@ cube = RubiksColorSolverGeneric(3)
 max_length = 19
 time_out = 2
 #IP Address of the Broker (Bluetooth Network Connection)
-DEFAULT_DIRECTORY = "wecuber"
-DEFAULT_FILE = "function_test"
+DEFAULT_DIRECTORY = "wecuber2"
+DEFAULT_FILE = "main_cv"
 DEFAULT_IP = "169.254."
 STRING_CUBE = "" # save the scanned rubik (not for visualisation)
 GOAL_STRING = "" # for the solveto method
 METHOD = 1 
-IS_RANDOM = FALSE
 CURRENT_FORMAT = 1
 
 def on_connect(client, userdata, flags, rc):
@@ -41,7 +40,6 @@ def on_message(client, userdata, msg):
         if dict == "CVSCAN":
             scan_results = tracker.run_tracker()
             scan_data = json.loads(scan_results)
-            # print("Length of cubestring:{}".format(len(scan_data)))
             if len(scan_data) == 24:
                 cube = RubiksColorSolverGeneric(2)
             cube.enter_scan_data(scan_data)
@@ -141,7 +139,6 @@ def create_facelet_rects_2x2(a):
                     rubik_side_text[f] = canvas.create_text(x, y, font=("", 14), text=t[f], state=DISABLED)
 
 def get_definition_string():
-    # TODO: convert from cubetring to color
     """Generate the cube definition string from the facelet colors."""
     color_to_facelet = {}
     for i in range(6):
@@ -154,12 +151,10 @@ def get_definition_string():
     return s
 
 def cvscan():
-    # opencv = threading.Thread(target=tracker.run_tracker, )
     try:
         cube = RubiksColorSolverGeneric(3)
         scan_results = tracker.run_tracker()
         scan_data = json.loads(scan_results)
-        # print("Length of cubestring:{}".format(len(scan_data)))
         if len(scan_data) == 24:
             cube = RubiksColorSolverGeneric(2)
         cube.enter_scan_data(scan_data)
@@ -209,31 +204,7 @@ def empty():
                     canvas.itemconfig(facelet_id[f][row][col], fill="grey")
     show_text_log("Cube visualisation emptied successfully!")
 
-# def visualise(event):
-#     # global string_cube
-#     if METHOD == 3:
-#         comque.get()
-#         return
-#     temp_cubestring = comque.get()
-#     if len(temp_cubestring) == 24:
-#         pass
-#     print("visualising ")
-#     # print(string_cube)
-#     print(temp_cubestring)
-#     fc = twophase.face.FaceCube()
-#     fc.from_string(temp_cubestring)
-#     # fc is already modified to match the rubik's face of the app
-#     idx = 0
-#     for f in range(6):
-#         # center_cubie = cols[f][1][1]
-#         for row in range(3):
-#             for col in range(3):
-#                 # print(cols[fc.f[idx]]) # red, yellow etc.
-#                 # print(type(cols[fc.f[idx]])) # string
-#                 canvas.itemconfig(facelet_id[f][row][col], fill=cols[fc.f[idx]])
-#                 idx += 1
 def visualise(event):
-    # global string_cube
     global CURRENT_FORMAT
     temp_cubestring = comque.get()
     if len(temp_cubestring) == 54:
@@ -429,17 +400,14 @@ def option_changed(self, *args):
     print(type(temp_res))
     if (temp_res == "Kociemba's algorithm"): 
         METHOD = 1
-        IS_RANDOM = False
         clean()
         show_text_random("")
     elif temp_res == "Korf's algorithm": 
         METHOD = 2
-        IS_RANDOM = False
         clean()
         show_text_random("")
     elif temp_res == "Solve to chosen pattern":
         METHOD = 3
-        IS_RANDOM = True
 
 label_algo = Label(text='Select advanced algorithm/function:', font=("Arial", 9, "bold"))
 hp_window = canvas.create_window(50 + 5.5 * width, 10+6.5*width, anchor=NW, window=label_algo)

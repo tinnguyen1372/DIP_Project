@@ -5,7 +5,7 @@ import mqtt_comm as com
 import logging
 import json
 import sys
-
+import time
 
 
 # logging.basicConfig(filename='rubiks.log',
@@ -21,15 +21,11 @@ logging.addLevelName(logging.WARNING, "\033[91m %s\033[0m" % logging.getLevelNam
 def solve(scan_try):
     # try
     mcube = MindCuber()
-    mcube.wait_for_cube_insert()
-
-    # Push the cube to the right so that it is in the expected
-    # position when we begin scanning
-    mcube.flipper_hold_cube(100)
-    mcube.flipper_away(100)
 
     #Step 2: Generate solution
     result = com.send_to_pc("CVSCAN")
+    time.sleep(2)
+    mcube.wait_for_cube_insert()
 
     #Step 3: Solve
     mcube.flipper_hold_cube(100)
@@ -37,7 +33,6 @@ def solve(scan_try):
         mcube.resolve(result)
     except:
         if not scan_try:
-            mcube.on_scan_error()
             log.info("Scan Error /n Scanning Again...")
             solve(1)            
         else:
@@ -47,10 +42,4 @@ def solve(scan_try):
 
 
         mcube.shutdown_robot()
-
-    # except Exception as e:
-    #     log.exception(e)
-    #     mcube.shutdown_robot()
-    #     sys.exit(1)
-
 solve(0)
