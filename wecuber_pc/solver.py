@@ -29,3 +29,4 @@ def solve(max_length, time_out, cubestring, method, goalstring):
         print("Result from solveto method: {}".format(solution))
     # print(solution)
     return solution
+
