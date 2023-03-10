@@ -159,8 +159,8 @@ def cvscan():
         output = tracker()
         comque.put(output)
         root.event_generate('<<TimeChanged>>', when='tail')
-    except:
-        print("Error in OpenCV Scanning")
+    except Exception as e:
+        print("Error in OpenCV Scanning: {}".format(e))
 # ###################################### Solve the displayed cube ######################################################
 def solvex():
     try:

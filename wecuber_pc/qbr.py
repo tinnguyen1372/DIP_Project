@@ -78,10 +78,10 @@ def tracker():
         cvscan = Qbr()
         cubestring = cvscan.run()
         print("Cubestring: {}".format(cubestring))
+        return cubestring
     except Exception as e:
         print("Errors: {}".format(e))
 
-    return cubestring
 
 if __name__ == "__main__":
     cubestring = tracker()
