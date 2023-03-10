@@ -53,7 +53,7 @@
 - Run the code:
     - After preparation, simply run the file ****
         ```
-        python3 *filename*
+        python3 wecuber_GUI.py
         ```
     - Screenshot of the GUI:
     ![GUI_Screenshot](/img/GUI_Screenshot.png "GUI")
