@@ -55,6 +55,8 @@
         ```
         python3 *filename*
         ```
+    - Screenshot of the GUI:
+    ![GUI_Screenshot](/img/GUI_Screenshot.png "GUI")
 ## 2x2x2 Solving
 - These modifications have been done for 2x2:
     + Platform holder: Designed and 3D printed a smaller platform adapter to hold the smaller 2x2 cube.
