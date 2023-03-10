@@ -30,34 +30,45 @@ GOAL_STRING = "" # for the solveto method
 METHOD = 1 
 CURRENT_FORMAT = 1
 
-
+from qbr import Qbr
+import argparse
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
     client.subscribe("topic/ev3_to_pc")
 
 def on_message(client, userdata, msg): 
     dict = str(msg.payload.decode('utf-8'))
-    try:
-        cube = RubiksColorSolverGeneric(3)
-        if dict == "CVSCAN":
-            webcam = Qbr()
-            scan_results = webcam.run()
-            scan_data = json.loads(scan_results)
-            if len(scan_data) == 24:
-                cube = RubiksColorSolverGeneric(2)
-            cube.enter_scan_data(scan_data)
-        else:
-            cube.enter_scan_data(json.loads(dict))
-        cube.crunch_colors()
-        output = "".join(cube.cube_for_kociemba_strict())
-        global STRING_CUBE
-        STRING_CUBE = output
-        cube.print_cube()
-        comque.put(output)
-        root.event_generate('<<TimeChanged>>', when='tail')
-    except Exception as e:
-        print(e)
-        output = e
+    # try:
+    cube = RubiksColorSolverGeneric(3)
+    if dict == "CVSCAN":
+        parser = argparse.ArgumentParser()
+        parser.add_argument(
+            '-n',
+            '--normalize',
+            default=False,
+            action='store_true',
+            help='Shows the solution normalized. For example "R2" would be: \
+                "Turn the right side 180 degrees".'
+        )
+        args = parser.parse_args()
+        scan_results = Qbr(args.normalize).run().replace("'", "3")
+        print("The scan results is: ", scan_results)
+    #         scan_data = json.loads(scan_results)
+    #         if len(scan_data) == 24:
+    #             cube = RubiksColorSolverGeneric(2)
+    #         cube.enter_scan_data(scan_data)
+    #     else:
+    #         cube.enter_scan_data(json.loads(dict))
+    #     cube.crunch_colors()
+    #     output = "".join(cube.cube_for_kociemba_strict())
+    #     global STRING_CUBE
+    #     STRING_CUBE = output
+    #     cube.print_cube()
+    #     comque.put(output)
+    #     root.event_generate('<<TimeChanged>>', when='tail')
+    # except Exception as e:
+    #     print(e)
+    #     output = e
     cube = None
     #   method = 1 # 1 for Two phase Kociemba, 2 for Korf
     method = 1
@@ -65,8 +76,8 @@ def on_message(client, userdata, msg):
         method = 1
     elif dropdown.get() == "Korf's algorithm": method = 2
     elif dropdown.get() == "Solve to chosen pattern": method = 3
-    solution = solver.solve(max_length, time_out, STRING_CUBE, method,  solveToString.get("1.0",'end-1c').strip()) # default is Kociemba
-    client.publish("topic/pc_to_ev3", solution)
+    # solution = solver.solve(max_length, time_out, scan_results, method,  solveToString.get("1.0",'end-1c').strip()) # default is Kociemba
+    client.publish("topic/pc_to_ev3", scan_results)
     logging.info("Sent solution to EV3")
 
 # ################################## Some global variables and constants ###############################################
@@ -153,12 +164,13 @@ def get_definition_string():
                 s += color_to_facelet[canvas.itemcget(facelet_id[f][row][col], "fill")]
     return s
 
-from qbr import tracker
+# from qbr import tracker
 def cvscan():
     try: 
-        print(tracker())
+        print()
     except:
         print("Error in OpenCV Scanning")
+    
 # ###################################### Solve the displayed cube ######################################################
 def solvex():
     try:
