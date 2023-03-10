@@ -551,9 +551,7 @@ class Webcam():
         self.cam.release()
         cv2.destroyAllWindows()
         
-        print(len(self.result_state.keys()))
         cubestring = self.get_result_notation()
-        print(cubestring)
         if len(self.result_state.keys()) != 6:
             return E_INCORRECTLY_SCANNED
 

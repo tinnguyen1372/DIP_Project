@@ -204,9 +204,8 @@ def visualise(event):
             remove_facelets_2x2()
             add_facelets_cube()
             CURRENT_FORMAT = 1
-        print("visualising ")
+        print("Visualising 3x3 Cubestring {}".format(temp_cubestring))
         # print(string_cube)
-        print(temp_cubestring)
         fc = twophase.face.FaceCube()
         fc.from_string(temp_cubestring)
         # fc is already modified to match the rubik's face of the app
@@ -222,8 +221,7 @@ def visualise(event):
             remove_facelets_cube()
             add_facelets_2x2()
             CURRENT_FORMAT = 2
-        print("visualising 2x2")
-        print(temp_cubestring)
+        print("Visualising 2x2 Cubestring {}".format(temp_cubestring))
         fc = two_by_two.face.FaceCube()
         fc.from_string(temp_cubestring)
 

@@ -20,7 +20,7 @@ class Qbr:
         # def __init__(self, normalize):
         #     self.normalize = normalize
 
-        def print_E_and_exit(code):
+        def print_E_and_exit(self,code):
                 """Print an error message based on the code and exit the program."""
                 if code == E_INCORRECTLY_SCANNED:
                     print('\033[0;33m[{}] {}'.format(i18n.t('error'), i18n.t('haventScannedAllSides')))
