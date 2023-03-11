@@ -16,8 +16,8 @@ class Config:
         except Exception:
             self.settings = {}
 
-        if not os.path.exists(self.config_dir):
-            os.mkdir(self.config_dir)
+        # if not os.path.exists(self.config_dir):
+        #     os.mkdir(self.config_dir)
 
     def get_setting(self, key, default_value=None):
         """Get a specific key from the settings."""
