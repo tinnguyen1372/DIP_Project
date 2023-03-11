@@ -38,13 +38,12 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, msg): 
     dict = str(msg.payload.decode('utf-8'))
     try:
-        cube = RubiksColorSolverGeneric(3)
+        global STRING_CUBE
         if dict == "CVSCAN3":
             from qbr import tracker
             output = tracker()
             if len(output) ==54 :
                 comque.put(output)
-                global STRING_CUBE
                 STRING_CUBE = output
                 root.event_generate('<<TimeChanged>>', when='tail')
                 
@@ -58,17 +57,16 @@ def on_message(client, userdata, msg):
             cube.enter_scan_data(scan_data)
             cube.crunch_colors()
             output = "".join(cube.cube_for_kociemba_strict())
-            global STRING_CUBE
             STRING_CUBE = output
             cube.print_cube()
             comque.put(output)
             root.event_generate('<<TimeChanged>>', when='tail')
 
         else:
+            cube = RubiksColorSolverGeneric(3)
             cube.enter_scan_data(json.loads(dict))
             cube.crunch_colors()
             output = "".join(cube.cube_for_kociemba_strict())
-            global STRING_CUBE
             STRING_CUBE = output
             cube.print_cube()
             comque.put(output)
