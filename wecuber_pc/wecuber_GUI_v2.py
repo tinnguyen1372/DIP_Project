@@ -157,8 +157,11 @@ def cvscan():
     try: 
         from qbr import tracker
         output = tracker()
-        comque.put(output)
-        root.event_generate('<<TimeChanged>>', when='tail')
+        if len(output) ==54 :
+            comque.put(output)
+            root.event_generate('<<TimeChanged>>', when='tail')
+        else:
+            print("Error in scanning")
     except Exception as e:
         print("Error in OpenCV Scanning: {}".format(e))
 # ###################################### Solve the displayed cube ######################################################
