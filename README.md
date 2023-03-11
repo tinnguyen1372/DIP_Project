@@ -65,3 +65,17 @@
     + Color sensor motor: not used, instead the cube is scanned using computer vision
     + Ultrasonic sensor: no change
     + Solving algorithm: Used the Optimal 2x2 solver algorithm to solve the cube.
+
+## OpenCV Integration
+
+To detect the current state of the Rubik's Cube, this solver uses two Python libraries that integrate with OpenCV. These libraries provide a robust and efficient way to detect the current state of the Rubik's Cube using computer vision techniques.
+
+The Rubik's Cube solver includes two submodules for OpenCV integration: one for 3x3 cube scanning and one for 2x2 cube scanning. Both submodules can be found in the repository.
+
+To use the OpenCV integration in this Rubik's Cube solver, you can follow these steps:
+
+1. Run the solver script and use the OpenCV integration to detect the current state of the Rubik's Cube.
+2. Once the state of the Rubik's Cube is detected, the solver will generate a solution to the Rubik's Cube.
+
+The OpenCV integration in this solver provides an efficient and accurate way to detect the current state of the Rubik's Cube, making it possible to solve Rubik's Cubes of different sizes.
+
