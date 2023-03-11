@@ -51,7 +51,7 @@ def on_message(client, userdata, msg):
 
         elif dict == "CVSCAN2":
             import webcamtracker as tracker2x2
-            scan_results = tracker.run_tracker()
+            scan_results = tracker2x2.run_tracker()
             scan_data = json.loads(scan_results)
             if len(scan_data) == 24:
                 cube = RubiksColorSolverGeneric(2)
