@@ -8,6 +8,7 @@
 - The solver and GUI for 2x2 Cube can be found at https://github.com/hkociemba/Rubiks2x2x2-OptimalSolver.
 - The rubikscolorresolver from Dwalton can be found at https://github.com/dwalton76/rubiks-color-resolver.
 - The rubikscolortracker from Dwalton for OpenCV features can be found at https://github.com/dwalton76/rubiks-cube-tracker.
+- The a webcam-based 3x3x3 rubik's cube from kkoomen for OpenCV features can be found at https://github.com/kkoomen/qbr.
 
 ## Prerequisite
 ***This project is only supported by the Windows OS.***
