@@ -178,8 +178,10 @@ def cvscan():
             root.event_generate('<<TimeChanged>>', when='tail')
         else:
             print("Error in scanning")
+            print("Starting to try again")
+            cvscan()
     except Exception as e:
-        print("Error in OpenCV Scanning: {}".format(e))
+        print("Error in Scanning: {}".format(e))
 # ###################################### Solve the displayed cube ######################################################
 def solvex():
     try:

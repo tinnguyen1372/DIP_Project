@@ -564,4 +564,4 @@ class Webcam():
         return cubestring
 
 
-webcam = Webcam()
+# webcam = Webcam()
