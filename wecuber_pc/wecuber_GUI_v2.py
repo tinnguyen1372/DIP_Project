@@ -47,7 +47,6 @@ def on_message(client, userdata, msg):
                 STRING_CUBE = output
                 root.event_generate('<<TimeChanged>>', when='tail')
                 
-
         elif dict == "CVSCAN2":
             import webcamtracker as tracker2x2
             scan_results = tracker2x2.run_tracker()
@@ -237,7 +236,7 @@ def visualise(event):
                     canvas.itemconfig(facelet_id[f][row][col], fill=cols[fc.f[idx]])
                     idx += 1
 
-    else:
+    elif len(temp_cubestring) == 24:
         if CURRENT_FORMAT != 2:
             remove_facelets_cube()
             add_facelets_2x2()
@@ -252,7 +251,9 @@ def visualise(event):
                 for col in range(2):
                     canvas.itemconfig(facelet_id[f][row][col], fill=cols[fc.f[idx]] )
                     idx += 1
-
+    else:
+        print("Error in scanning")
+        pass
 def remove_facelets_cube():
     for f in range(6):
         for row in range(3):
