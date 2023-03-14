@@ -40,13 +40,9 @@ def on_message(client, userdata, msg):
     try:
         global STRING_CUBE
         if dict == "CVSCAN3":
-            from qbr import tracker
-            output = tracker()
-            if len(output) ==54 :
-                comque.put(output)
-                STRING_CUBE = output
-                root.event_generate('<<TimeChanged>>', when='tail')
-                
+            output = cvscan()
+            STRING_CUBE = output
+            
         elif dict == "CVSCAN2":
             import webcamtracker as tracker2x2
             scan_results = tracker2x2.run_tracker()
@@ -181,6 +177,7 @@ def cvscan():
             cvscan()
     except Exception as e:
         print("Error in Scanning: {}".format(e))
+    return output
 # ###################################### Solve the displayed cube ######################################################
 def solvex():
     try:
