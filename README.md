@@ -62,29 +62,6 @@
     python3 wecuber_GUI.py
     ```
 
-
-## 2x2x2 Solving
-
-- These modifications have been done for 2x2:
-  - Platform holder: Designed and 3D printed a smaller platform adapter to hold the smaller 2x2 cube.
-  - Flipper arm: The flipping motion worked just fine. Minor additional parts have been added to block the upper layer from moving when doing rotate_cube_blocked actions
-  - Color sensor motor: not used, instead the cube is scanned using computer vision
-  - Ultrasonic sensor: no change
-  - Solving algorithm: Used the Optimal 2x2 solver algorithm to solve the cube.
-
-## OpenCV Integration
-
-To detect the current state of the Rubik's Cube, this solver uses two Python libraries that integrate with OpenCV. These libraries provide a robust and efficient way to detect the current state of the Rubik's Cube using computer vision techniques.
-
-The Rubik's Cube solver includes two submodules for OpenCV integration: one for 3x3 cube scanning and one for 2x2 cube scanning. Both submodules can be found in the repository.
-
-To use the OpenCV integration in this Rubik's Cube solver, you can follow these steps:
-
-1. Run the solver script and use the OpenCV integration to detect the current state of the Rubik's Cube.
-2. Once the state of the Rubik's Cube is detected, the solver will generate a solution to the Rubik's Cube.
-
-The OpenCV integration in this solver provides an efficient and accurate way to detect the current state of the Rubik's Cube, making it possible to solve Rubik's Cubes of different sizes.
-
 ## Introduction:
 
 This project is a part of Design & Innovation Project (DIP) at School of Electrical & Electronic Engineering at NTU. The problem statement includes solving the rubik cube (3x3x3) using robots arms built from LEGO® MINDSTORMS® EV3. The additional requirements for this project is to solve the 2x2x2 rubik with the same setup.
@@ -113,7 +90,7 @@ To run this project, we use:
 
 ### 1. Better architecture: Client-server system architecture
 
-// include the picture of both pc and robot running together
+![Client-server](/img/pc_and_ev3.png 'Client-server')
 
 We have managed to decouple the solving algorithm from the EV3, and move it to the separate device like laptop. The EV3's responsibilities now only include rubik scanning, communicating with the laptop and controlling robot's movement based on the instructions given.
 
@@ -127,16 +104,47 @@ We have spent a lot of time on calibrating the hardware by changing the physical
 
 ### 3. More optimal algorithms to choose from: Kociemba and Korf's algorithm
 
-// Add details of two algorithms here
+We have developed, modified and integrated successfully two rubik's solving algorithm:
+
+- Kociemba's Two phase algorithm: Kociemba’s algorithm identifies a subset of 20 billion positions, called H. Reid showed that every position in this subset is solvable in at most 18 moves, and further that every cube position is at most 12 moves from this subset. Phase one finds a move sequence that takes an arbitrary cube position to some position in the subset H, and phase two finds a move sequence that takes this new position to the fully solved state.
+
+- Korf's optimal algorithm: Richard Korf’s algorithm can solve any scrambled cube in 20 moves or fewer. It works by searching for solutions using an iterative-deepening depth-first search combined with A* (IDA*). Iterative-deepening depth-first search (IDDFS) is a tree-traversal algorithm. Like a breadth-first search (BFS), IDDFS is guaranteed to find an optimal path from the root node of a tree to a goal node, but it uses less memory than a BFS.
+
+- Comparison between two algorithm:
+
+Generally, Korf's solution will be less than the Kociemba's Two phase algorithm, but the time it takes to get the solution is considerably larger.
+
+> Here is a comparison between the two algorithms:
+> ![Algo_Comparison](/img/Algo_Comparison.png 'Comparison')
 
 ### 4. Better user experience: Developed Graphical User Interface
+
+We have developed a graphical user interface so that the user could use our application easier, without the need to touch the command line or terminal.
 
 ![GUI_Screenshot](/img/GUI_Screenshot.png 'GUI')
 
 ### 5. Unique feature: Solving to specific patern
 
-// Add details of solving to specific pattern here
+You also have the possibility to solve a cube not to the solved position but to some favorite pattern you want. This feature is already integrated successfully with the GUI.
 
-### 6. Computer Vision: faster scanning instead of Color Sensor
+### 6. Modification for 2x2x2 rubik solving
 
-// Add details of CV here
+- These modifications have been done for 2x2:
+  - Platform holder: Designed and 3D printed a smaller platform adapter to hold the smaller 2x2 cube.
+  - Flipper arm: The flipping motion worked just fine. Minor additional parts have been added to block the upper layer from moving when doing rotate_cube_blocked actions
+  - Color sensor motor: not used, instead the cube is scanned using computer vision
+  - Ultrasonic sensor: no change
+  - Solving algorithm: Used the Optimal 2x2 solver algorithm to solve the cube.
+
+### 7. Computer Vision: faster scanning instead of Color Sensor
+
+To detect the current state of the Rubik's Cube, this solver uses two Python libraries that integrate with OpenCV. These libraries provide a robust and efficient way to detect the current state of the Rubik's Cube using computer vision techniques.
+
+The Rubik's Cube solver includes two submodules for OpenCV integration: one for 3x3 cube scanning and one for 2x2 cube scanning. Both submodules can be found in the repository.
+
+To use the OpenCV integration in this Rubik's Cube solver, you can follow these steps:
+
+1. Run the solver script and use the OpenCV integration to detect the current state of the Rubik's Cube.
+2. Once the state of the Rubik's Cube is detected, the solver will generate a solution to the Rubik's Cube.
+
+The OpenCV integration in this solver provides an efficient and accurate way to detect the current state of the Rubik's Cube, making it possible to solve Rubik's Cubes of different sizes.
