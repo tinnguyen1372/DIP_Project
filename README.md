@@ -61,8 +61,7 @@
     ```
     python3 wecuber_GUI.py
     ```
-  - Screenshot of the GUI:
-    ![GUI_Screenshot](/img/GUI_Screenshot.png 'GUI')
+
 
 ## 2x2x2 Solving
 
