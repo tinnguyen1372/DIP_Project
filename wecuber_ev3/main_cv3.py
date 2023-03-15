@@ -23,7 +23,8 @@ def solve(scan_try):
     mcube = MindCuber()
 
     #Step 2: Generate solution
-    result = com.send_to_pc("CVSCAN")
+    log.info("3x3x3 solver")
+    result = com.send_to_pc("CVSCAN3")
     time.sleep(2)
     mcube.wait_for_cube_insert()
 
