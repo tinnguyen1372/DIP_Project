@@ -112,7 +112,7 @@ To run this project, we use:
 
 ## New features
 
-1. Better architecture: Client-server system architecture
+### 1. Better architecture: Client-server system architecture
 
 // include the picture of both pc and robot running together
 
@@ -122,19 +122,22 @@ Meanwhile, the laptop will act as a server, which will run the solving algorithm
 
 This architecture is better than the normal one, where the EV3 will do all the work of scanning, running algorithm and control the robot's movement. Since the processor of EV3 is not as strong as the laptop's one, it would take long time to run the algorithms, especially the more complicated one - Korf's algorithm
 
-2. Higher solving's success rate, less time spent on the process
+### 2. Higher solving's success rate, less time spent on the process
 
 We have spent a lot of time on calibrating the hardware by changing the physical and logical aspect. This includes choosing appropriate parameters for displacement, speed and position of each robot's movement to ensure best accuracy and performance. Hence, we are proud to say our success rate is close to 100% after multiple tries.
 
-3. More optimal algorithms to choose from: Kociemba and Korf's algorithm
-   // Add details of two algorithms here
+### 3. More optimal algorithms to choose from: Kociemba and Korf's algorithm
 
-4. Better user experience: Developed Graphical User Interface
+// Add details of two algorithms here
+
+### 4. Better user experience: Developed Graphical User Interface
 
 ![GUI_Screenshot](/img/GUI_Screenshot.png 'GUI')
 
-5. Unique feature: Solving to specific patern
-   // Add details of solving to specific pattern here
+### 5. Unique feature: Solving to specific patern
 
-6. Computer Vision: faster scanning instead of Color Sensor
-   // Add details of CV here
+// Add details of solving to specific pattern here
+
+### 6. Computer Vision: faster scanning instead of Color Sensor
+
+// Add details of CV here
