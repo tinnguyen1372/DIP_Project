@@ -90,7 +90,7 @@ To run this project, we use:
 
 ### 1. Better architecture: Client-server system architecture
 
-![Client-server](/img/pc_and_ev3.png 'Client-server')
+![Client-server](/img/pc_and_ev3.HEIC 'Client-server')
 
 We have managed to decouple the solving algorithm from the EV3, and move it to the separate device like laptop. The EV3's responsibilities now only include rubik scanning, communicating with the laptop and controlling robot's movement based on the instructions given.
 
