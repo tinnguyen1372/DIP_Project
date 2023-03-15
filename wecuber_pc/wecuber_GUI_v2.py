@@ -169,17 +169,18 @@ def cvscan():
     try: 
         from qbr import tracker
         output = tracker()
-        if len(output) ==54 :
+        if len(output) ==54:
             comque.put(output)
             root.event_generate('<<TimeChanged>>', when='tail')
+            return output
         else:
             show_text_log("Error in scanning ...")
             print("Error in scanning")
             print("Starting to try again")
-            cvscan()
+            return cvscan()
     except Exception as e:
         print("Error in Scanning: {}".format(e))
-    return output
+        return cvscan()
 # ###################################### Solve the displayed cube ######################################################
 def solvex():
     try:
