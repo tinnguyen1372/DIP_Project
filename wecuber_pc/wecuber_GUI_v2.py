@@ -169,6 +169,7 @@ def get_definition_string():
     return s
 
 def cvscan():
+    show_text_log("Using Computer Vision to scan ...")
     try: 
         from qbr import tracker
         output = tracker()
@@ -176,6 +177,7 @@ def cvscan():
             comque.put(output)
             root.event_generate('<<TimeChanged>>', when='tail')
         else:
+            show_text_log("Error in scanning ...")
             print("Error in scanning")
             print("Starting to try again")
             cvscan()
@@ -190,6 +192,7 @@ def solvex():
     except BaseException as e:
         show_text('Invalid facelet configuration.\nWrong or missing colors. ' + e.__doc__)
         return
+    show_text_log("Solving the rubik ....")
     show_text(defstr + '\n')
     show_text(sv.solve(defstr,19,2) + '\n')
 
@@ -215,6 +218,7 @@ def empty():
     show_text_log("Cube visualisation emptied successfully!")
 
 def visualise(event):
+    show_text_log("Visualising cube on the GUI ...")
     global CURRENT_FORMAT
     temp_cubestring = comque.get()
     if len(temp_cubestring) == 54:
@@ -336,10 +340,10 @@ def mqtt_connect_button():
     ip = txt_ip.get("1.0",'end-1c')
     if ip != DEFAULT_IP:
         threading.Thread(target= test_mqtt,args=(ip,)).start()
-        show_text_log("Connected to {} successfully. Click Run File to start scanning & solving".format(DEFAULT_IP))
+        show_text_log("Connected to {} successfully. Click Run File to start scanning & solving".format(ip))
     else:
-        logging.info("Already connected to {}".format(DEFAULT_IP))
-        show_text_log("Already connected to {}".format(DEFAULT_IP))
+        logging.info("Already connected to {}".format(ip))
+        show_text_log("Already connected to {}".format(ip))
 
 from SSH_Client import *
 def ssh_client_connect():
@@ -353,6 +357,7 @@ def ssh_client_connect():
         ev3.spawn_ssh(dir = directory, filename = file_to_run)
     except Exception as e:
         logging.info("Error in execution: {}".format(e))
+    show_text_log("Solve successfully!") # Tin's credit
     
 def ssh_client_button():
     threading.Thread(target= ssh_client_connect).start()
@@ -412,12 +417,15 @@ def option_changed(self, *args):
         METHOD = 1
         clean()
         show_text_random("")
+        show_text_log("Kociemba's algorithm chosen!")
     elif temp_res == "Korf's algorithm": 
         METHOD = 2
         clean()
         show_text_random("")
+        show_text_log("Kociemba's algorithm chosen!")
     elif temp_res == "Solve to chosen pattern":
         METHOD = 3
+        show_text_log("Solve to method chosen!")
 
 label_algo = Label(text='Select advanced algorithm/function:', font=("Arial", 9, "bold"))
 hp_window = canvas.create_window(50 + 5.5 * width, 10+6.5*width, anchor=NW, window=label_algo)
