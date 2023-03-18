@@ -32,8 +32,7 @@
   - Solving the cube by Twophase solver.
   - Solving the cube by Optimal Solver.
   - Solving to specific patterns.
-    > Here is a comparison between the two algorithms:
-    > ![Algo_Comparison](/img/Algo_Comparison.png 'Comparison')
+    
 - Regarding scanning, we provide 2 modes of scanning:
   - Traditional scanning by Color Sensor.
   - Scanning by webcam using OpenCV.
