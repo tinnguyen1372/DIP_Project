@@ -287,7 +287,7 @@ def random():
     cc = cubie.CubieCube()
     cc.randomize()
     fc = cc.to_facelet_cube()
-    print(type(fc) )
+    # print(type(fc) )
     
     idx = 0
     for f in range(6):
@@ -298,6 +298,35 @@ def random():
     show_text_random(get_definition_string()+"\n")
     show_text_log("Randomize the cube succesfully. Click run file button to solve.")
 
+def cube3d():
+    defstr = get_definition_string()
+    solution = sv.solve(defstr,19,2)
+    thread = threading.Thread(target=run3dmode, args=(solution,))
+    thread.start()
+
+
+def run3dmode(solution):
+    from Cube3D.PyCube import PyCube
+    cube = PyCube()
+    solution_list=list(solution.split(" "))
+    result_solution = []
+    for i in solution_list:
+        try:
+            if i[1] == '2':
+                result_solution.append(i[0])
+                result_solution.append(i[0])
+            elif i[1] == '3':
+                result_solution.append(i[0])
+                result_solution.append(i[0])
+                result_solution.append(i[0])
+            elif i[1] == '1':
+                result_solution.append(i[0])
+            else:
+                pass
+        except:
+            pass
+    # print(result_solution)
+    cube.run(result_solution)
 # ################################### Edit the facelet colors ##########################################################
 
 
@@ -391,14 +420,17 @@ bsolve_window = canvas.create_window(10 + 1.5 * width, -25 + 2.8 * width, anchor
 bsolve = Button(root,text="Connect", height=2, width=10, relief=RAISED, command=mqtt_connect_button)
 bsolve_window = canvas.create_window(10 +0* width, -25 + 2.8 * width, anchor=NW, window=bsolve)
 
+
 bsolve = Button(root,text="Solve", height=1, width=10, relief=RAISED, command=solvex)
 bsolve_window = canvas.create_window(10 + 10.5 * width, 10 + 6.5 * width, anchor=NW, window=bsolve)
 bsolve = Button(root,text="Tracker", height=1, width=10, relief=RAISED, command=cvscan)
 bsolve_window = canvas.create_window(10 + 10.5 * width, 10 + 7 * width, anchor=NW, window=bsolve)
 bclean = Button(root,text="Clean", height=1, width=10, relief=RAISED, command=clean)
 bclean_window = canvas.create_window(10 + 10.5 * width, 10 + 7.5 * width, anchor=NW, window=bclean)
-bempty = Button(root,text="Empty", height=1, width=10, relief=RAISED, command=empty)
-bempty_window = canvas.create_window(10 + 10.5 * width, 10 + 8 * width, anchor=NW, window=bempty)
+# bempty = Button(root,text="Empty", height=1, width=10, relief=RAISED, command=empty)
+# bempty_window = canvas.create_window(10 + 10.5 * width, 10 + 8 * width, anchor=NW, window=bempty)
+bsolve = Button(root,text="3D Mode", height=1, width=10, relief=RAISED, command=cube3d)
+bsolve_window = canvas.create_window(10 + 10.5 * width, 10 + 8 * width, anchor=NW, window=bsolve)
 brandom = Button(root,text="Random", height=1, width=10, relief=RAISED, command=random)
 brandom_window = canvas.create_window(10 + 10.5 * width, 10 + 8.5 * width, anchor=NW, window=brandom)
 display = Text(root,height=10, width=42)
@@ -410,7 +442,7 @@ def option_changed(self, *args):
     global METHOD
     temp_res = dropdown.get()
     print("User select", temp_res)
-    print(type(temp_res))
+    # print(type(temp_res))
     if (temp_res == "Kociemba's algorithm"): 
         METHOD = 1
         clean()
