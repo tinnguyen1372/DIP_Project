@@ -23,7 +23,7 @@ class PyCube:
     def __init__(self):
         pygame.init()
         self.width = 800
-        self.height = 600
+        self.height = 564
 
         self.initial_pos = False
 
@@ -65,6 +65,12 @@ class PyCube:
         }
         self.last_moves = []
         self.display_surface = pygame.display.set_mode((self.width, self.height), DOUBLEBUF | OPENGL)
+        # Take image as input
+        img = pygame.image.load('Rubiks3d.ico')
+        
+        # Set image as icon
+        pygame.display.set_icon(img)
+        
         pygame.display.set_caption('PyCube')
 
         self.font = pygame.font.Font('freesansbold.ttf', 32)
@@ -73,7 +79,7 @@ class PyCube:
         self.textRect.center = (self.width // 2, self.height // 2)
 
         # glClearColor(0.35, 0.35, 0.35, 1.0)
-        glClearColor(1, 1, 1, 0)
+        self.clear = glClearColor(1, 1, 1, 0)
         # Using depth test to make sure closer colors are shown over further ones
         glEnable(GL_DEPTH_TEST)
         glDepthFunc(GL_LESS)
@@ -91,6 +97,7 @@ class PyCube:
         # pygame.display.set_caption("Press ESC to quit")
         pygame.display.set_mode((width, height), DOUBLEBUF | OPENGL | RESIZABLE)
         gluPerspective(45, (width / height), 0.5, 40)
+
     def reverse(self, moves):
         result = []
         #reverse moves list
@@ -406,22 +413,21 @@ class PyCube:
 
             self.display_surface.blit(self.text, self.textRect)
             update()
-    
             theta_inc = 7
             theta = pi / 2 / theta_inc
             for event in pygame.event.get():
                 #check if enter is pressed
 
                 if event.type == pygame.QUIT:
-                
                     pygame.quit()
                     quit()
-                    # elif event.type == VIDEORESIZE:
-                    # self.CreateWindow(event.w, event.h)
-                    # update()
+                # elif event.type == VIDEORESIZE:
+                #     self.CreateWindow(event.w, event.h)
+                #     update()
                 pygame.event.clear()
                 if self._reverse:
                     pygame.event.post(pygame.event.Event(pygame.KEYDOWN, key=pygame.K_RETURN)) #add the event to the queue
+
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RETURN or event.key == pygame.K_RIGHT:
                         try:
@@ -437,9 +443,9 @@ class PyCube:
                                 print("No more moves")
                             else:
                                 self.initial_pos = not self.initial_pos                            
-                            self._reverse = False
-                            self.movements = _save_moves
-                            self.last_moves = []
+                                self._reverse = False
+                                self.movements = _save_moves
+                                self.last_moves = []
                             break
                         # try:
                         #     # Rotating about the x axis
@@ -456,13 +462,16 @@ class PyCube:
                         # except:
                         #     pass
 
-
                         full_move = move
                         if reverse:
-                            full_move+="'"
+                            full_move+='\''
 
                         if self.initial_pos:
-                            sys.stdout.write(f"{full_move} - {self.moves_info[full_move]}\n")
+                            try:
+                                print("{} - {}\n".format(full_move,self.moves_info[full_move]))
+                                # print(full_move)
+                            except Exception as e:
+                                print("No more moves")
                         if move =='F':
                             if reverse:
                                 moves += 'F'
@@ -667,6 +676,13 @@ class PyCube:
                         self.movements.insert(0, last_move)
                         move = self.reverse_moves[last_move]
                         reverse = False
+                        
+                        full_move = move
+                        if self.initial_pos:
+                            try:
+                                print("{} - {}\n".format(full_move,self.moves_info[full_move]))
+                            except Exception as e:
+                                print("No more moves")
                         if len(move) == 2:
                             move = move[0]
                             reverse = True

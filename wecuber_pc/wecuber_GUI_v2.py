@@ -300,9 +300,10 @@ def random():
 
 def cube3d():
     defstr = get_definition_string()
-    solution = sv.solve(defstr,19,2)
+    solution = solver.solve(max_length, time_out, defstr, 1,  None) # default is Kociemba
     thread = threading.Thread(target=run3dmode, args=(solution,))
     thread.start()
+    
 
 
 def run3dmode(solution):
