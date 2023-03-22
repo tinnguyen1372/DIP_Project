@@ -45,6 +45,7 @@
   - Make sure the sensors and motors have been connected correctly.
   - Prepare the additional parts for flipper 2x2.
   - Spawn a Bluetooth connection to PC.
+  - Set up MQTT Server according to this instruction https://www.ev3dev.org/docs/tutorials/sending-and-receiving-messages-with-mqtt/
 - Preparation on PC:
   - Install all the dependencies:
     ```
