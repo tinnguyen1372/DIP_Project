@@ -237,6 +237,7 @@ def visualise(event):
                 for col in range(3):
                     canvas.itemconfig(facelet_id[f][row][col], fill=cols[fc.f[idx]])
                     idx += 1
+        cube3d()
 
     elif len(temp_cubestring) == 24:
         if CURRENT_FORMAT != 2:
