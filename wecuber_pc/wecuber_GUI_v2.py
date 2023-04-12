@@ -453,7 +453,7 @@ def option_changed(self, *args):
         METHOD = 2
         clean()
         show_text_random("")
-        show_text_log("Kociemba's algorithm chosen!")
+        show_text_log("Korf's algorithm chosen!")
     elif temp_res == "Solve to chosen pattern":
         METHOD = 3
         show_text_log("Solve to method chosen!")
