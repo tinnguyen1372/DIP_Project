@@ -2,6 +2,7 @@
 import twophase.solver as twophase
 # import optimal.solver as korf
 from rubikscube2x2solver import solver as sv2x2
+import time
 
 def solve(max_length, time_out, cubestring, method, goalstring):
     print("Recieved scramble from EV3: {}".format(cubestring))
@@ -19,8 +20,9 @@ def solve(max_length, time_out, cubestring, method, goalstring):
         # solution = korf.solve(cubestring)
         # solution = solution[:solution.strip().rfind(" ")]
         solution = twophase.solve(cubestring,max_length,time_out)
+        time.sleep(2*60)
         solution = solution[:solution.strip().rfind('(')]
-        print("Result from Kociemba method: {}".format(solution))
+        print("Result from Korf method: {}".format(solution))
     elif method == 3: # SolveTo using two phase algorithm
         print("Trying to solve to: {}".format(goalstring))
         print(len(goalstring))
